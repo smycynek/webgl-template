@@ -3,8 +3,8 @@ import { Component } from '@angular/core';
 import { Constants } from './data/constants';
 import { Defaults } from './data/defaults';
 import { Shaders } from './data/shaders';
-import { Matrix4 } from './webGlUtil/math';
-import { WebGLUtil } from './webGlUtil/WebGLUtil';
+import { Matrix4 } from './util/math';
+import { GlUtil } from './util/glUtil';
 
 @Component({
   selector: 'app-root',
@@ -81,7 +81,7 @@ export class AppComponent {
     gl.enable(gl.CULL_FACE);
     gl.cullFace(gl.BACK);
 
-    WebGLUtil.initShaders(gl, Shaders.VSHADER_SOURCE, Shaders.FSHADER_SOURCE);
+    GlUtil.initShaders(gl, Shaders.VSHADER_SOURCE, Shaders.FSHADER_SOURCE);
 
     const pointCount = this.loadGLData(gl);
     this.logState();
@@ -183,8 +183,8 @@ export class AppComponent {
       console.log('No index buffer')
       return -1;
     }
-    if (!WebGLUtil.initArrayBuffer(gl, 'a_Position', Constants.vertices, 3, gl.FLOAT)) return -1;
-    if (!WebGLUtil.initArrayBuffer(gl, 'a_Normal', Constants.normals, 3, gl.FLOAT)) return -1;
+    if (!GlUtil.initArrayBuffer(gl, 'a_Position', Constants.vertices, 3, gl.FLOAT)) return -1;
+    if (!GlUtil.initArrayBuffer(gl, 'a_Normal', Constants.normals, 3, gl.FLOAT)) return -1;
 
     const translationMatrix = this.setupTranslation();
     const rotationMatrix = this.setupRotation();

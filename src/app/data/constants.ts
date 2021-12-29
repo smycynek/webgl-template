@@ -1,4 +1,4 @@
-import { Vector3, Vector4 } from "../webGlUtil/math";
+import { Vector3, Vector4 } from "../util/math";
 
 export class Constants {
   public static readonly POINT = "POINT";

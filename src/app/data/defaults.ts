@@ -1,4 +1,4 @@
-import { Vector3, Vector4 } from "../webGlUtil/math";
+import { Vector3, Vector4 } from "../util/math";
 import { Constants } from "./constants";
 
 export class Defaults {

@@ -14,17 +14,16 @@ export class Shaders {
     'varying vec4 v_Color;\n' + // Fragment color
     'void main() {\n' +
 
-    // Make the length of the normal 1.0
     // Rotate the normals along with the model, as they are provided in advance and not
     // calculated after the final translation.
     '  vec4 a_NormalR = u_TranslationMatrix * u_RotationMatrix * a_Normal;\n' +
     '  vec3 normal = normalize(a_NormalR.xyz);\n' +
 
     // Dot product of the light direction and the orientation of a surface (the normal)
-    '  float nDotL = max(dot(u_LightDirection, normal), 0.0);\n' +
-    // Calculate how much to scale the color down by (Lambert Cosine)
-    '  vec3 diffuse = u_LightColor * a_TriangleColor.rgb * nDotL;\n' +
-    '  v_Color = vec4(diffuse, a_TriangleColor.a);\n' +
+    '  float brightnessScalar = max(dot(u_LightDirection, normal), 0.0);\n' +
+    // Calculate how much to scale the color down by (Lambert Cosine Rule)
+    '  vec3 finalColor = u_LightColor * a_TriangleColor.rgb * brightnessScalar;\n' +
+    '  v_Color = vec4(finalColor, a_TriangleColor.a);\n' +
     '  gl_Position =  u_ProjMatrix * u_ViewMatrix * u_TranslationMatrix * u_RotationMatrix * a_Position;\n' + // Set the vertex coordinates of the point
     '  gl_PointSize = a_PointSize;\n' +
     '}\n';

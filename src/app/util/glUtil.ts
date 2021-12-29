@@ -2,9 +2,9 @@
 
 // Adapted from cuon-utils.js (c) 2012 kanda and matsuda
 
-export class WebGLUtil {
+export class GlUtil {
   public static initShaders(gl: any, vshader: string, fshader: string): boolean {
-    const program = WebGLUtil.createProgram(gl, vshader, fshader);
+    const program = GlUtil.createProgram(gl, vshader, fshader);
     if (!program) {
       console.log('Failed to create program');
       return false;
@@ -54,8 +54,8 @@ public static initArrayBuffer(gl: any, attribute: string, data: any, num: number
    */
   private static createProgram(gl: any, vshader: string, fshader: string) : any | null {
     // Create shader object
-    const vertexShader = WebGLUtil.loadShader(gl, gl.VERTEX_SHADER, vshader);
-    const fragmentShader = WebGLUtil.loadShader(gl, gl.FRAGMENT_SHADER, fshader);
+    const vertexShader = GlUtil.loadShader(gl, gl.VERTEX_SHADER, vshader);
+    const fragmentShader = GlUtil.loadShader(gl, gl.FRAGMENT_SHADER, fshader);
     if (!vertexShader || !fragmentShader) {
       return null;
     }
