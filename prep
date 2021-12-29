@@ -1,0 +1,7 @@
+#! /bin/bash
+rm -rf glta
+rm glta.zip
+npx ng build --base-href /glta/
+
+zip -r glta.zip glta
+
