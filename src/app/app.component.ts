@@ -5,6 +5,7 @@ import { Defaults } from './data/defaults';
 import { Shaders } from './data/shaders';
 import { Matrix4 } from './util/math';
 import { GlUtil } from './util/glUtil';
+import { ThisReceiver } from '@angular/compiler';
 
 @Component({
   selector: 'app-root',
@@ -13,9 +14,12 @@ import { GlUtil } from './util/glUtil';
 })
 export class AppComponent {
   public init: boolean = false;
-  public lightX: number = Defaults.lightX;
-  public lightY: number = Defaults.lightY;
-  public lightZ: number = Defaults.lightZ;
+  public directionalLightX: number = Defaults.directionalLightX;
+  public directionalLightY: number = Defaults.directionalLightY;
+  public directionalLightZ: number = Defaults.directionalLightZ;
+  public pointLightX: number = Defaults.pointLightX;
+  public pointLightY: number = Defaults.pointLightY;
+  public pointLightZ: number = Defaults.pointLightZ;
   public transX: number = Defaults.transX;
   public transY: number = Defaults.transY;
   public transZ: number = Defaults.transZ;
@@ -31,6 +35,7 @@ export class AppComponent {
   public lookX: number = Defaults.lookX;
   public lookY: number = Defaults.lookY;
   public lookZ: number = Defaults.lookZ;
+  public lightingType: string = Defaults.lightingType;
   public entityType: string = Defaults.entityType;
   public orthoLeft: number = Defaults.orthoLeft;
   public orthoRight: number = Defaults.orthoRight;
@@ -45,9 +50,16 @@ export class AppComponent {
   public projectionType: string = Defaults.projectionType;
   public title: string = 'WebGL Angular/TypeScript/Webpack Template - Desktop';
 
-
+  public setPointLightMode() {
+    this.lightingType = Constants.POINT_LIGHT;
+    this.start();
+  }
+  public setDirectionalLightMode() {
+    this.lightingType = Constants.DIRECTIONAL_LIGHT;
+    this.start();
+  }
   public setPointMode() {
-    this.entityType = Constants.POINT;
+    this.entityType = Constants.VERTEX;
     this.start();
   }
   public setTriangleMode() {
@@ -86,7 +98,7 @@ export class AppComponent {
     const pointCount = this.loadGLData(gl);
     this.logState();
 
-    if (this.entityType == Constants.POINT) {
+    if (this.entityType == Constants.VERTEX) {
       gl.drawArrays(gl.POINTS, 0, Constants.vertices.length / 3);
     }
     else {
@@ -196,21 +208,31 @@ export class AppComponent {
     const u_PointColor = gl.getUniformLocation(gl.program, 'u_PointColor');
     const u_LightColor = gl.getUniformLocation(gl.program, 'u_LightColor');
     const u_UseStaticColor = gl.getUniformLocation(gl.program, 'u_UseStaticColor');
+    const u_UseDirectionalLight = gl.getUniformLocation(gl.program, 'u_UseDirectionalLight');
     const u_LightDirection = gl.getUniformLocation(gl.program, 'u_LightDirection');
+    const u_LightPosition = gl.getUniformLocation(gl.program, 'u_LightPosition');
     const u_TranslationMatrix = gl.getUniformLocation(gl.program, 'u_TranslationMatrix');
     const u_RotationMatrix = gl.getUniformLocation(gl.program, 'u_RotationMatrix');
     const u_ViewMatrix = gl.getUniformLocation(gl.program, 'u_ViewMatrix');
     const u_ProjMatrix = gl.getUniformLocation(gl.program, 'u_ProjMatrix');
 
-    if (this.entityType == Constants.POINT) {
+    if (this.entityType == Constants.VERTEX) {
       gl.uniform1i(u_UseStaticColor, true); // If rendering points, render single color
     }
     else {
       gl.uniform1i(u_UseStaticColor, false); // Otherwise, each fragment/face gets its own color
     }
+
+    if (this.lightingType == Constants.DIRECTIONAL_LIGHT) {
+      gl.uniform1i(u_UseDirectionalLight, true);
+    } else {
+      gl.uniform1i(u_UseDirectionalLight, false);
+    }
+
     gl.uniform4fv(u_PointColor, Constants.pointColor.elements);
     gl.uniform3fv(u_LightColor, Constants.lightColor.elements);
-    gl.uniform3f(u_LightDirection, this.lightX, this.lightY, this.lightZ);
+    gl.uniform3f(u_LightDirection, this.directionalLightX, this.directionalLightY, this.directionalLightZ);
+    gl.uniform3f(u_LightPosition, this.pointLightX, this.pointLightY, this.pointLightZ);
 
     gl.uniformMatrix4fv(u_RotationMatrix, false, rotationMatrix.elements);
     gl.uniformMatrix4fv(u_TranslationMatrix, false, translationMatrix.elements);
@@ -226,10 +248,11 @@ export class AppComponent {
     return Constants.indices.length;
   }
 
-  private logState() : void {
+  private logState(): void {
     console.log(this.projectionType);
     console.log(this.entityType);
+    console.log(this.lightingType);
     Constants.print();
-}
+  }
 
 }

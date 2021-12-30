@@ -1,10 +1,12 @@
 import { Vector3, Vector4 } from "../util/math";
 
 export class Constants {
-  public static readonly POINT = "POINT";
+  public static readonly VERTEX = "VERTEX";
   public static readonly TRIANGLE = "TRIANGLE";
   public static readonly ORTHO = "ORTHO";
   public static readonly PERSPECTIVE = "PERSPECTIVE";
+  public static readonly POINT_LIGHT = "POINT_LIGHT";
+  public static readonly DIRECTIONAL_LIGHT = "DIRECTIONAL_LIGHT";
 
   public static readonly vertices = new Float32Array([   // Coordinates
     1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, // v0-v1-v2-v3 front

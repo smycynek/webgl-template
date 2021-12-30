@@ -679,12 +679,12 @@ export class Matrix4 {
    * Multiply the matrix for project vertex to plane from the right.(Projected by parallel light.)
    * @param normX, normY, normZ The normal vector of the plane.(Not necessary to be normalized.)
    * @param planeX, planeY, planeZ The coordinate of arbitrary points on a plane.
-   * @param lightX, lightY, lightZ The vector of the direction of light.(Not necessary to be normalized.)
+   * @param directionalLightX, directionalLightY, directionalLightZ The vector of the direction of light.(Not necessary to be normalized.)
    * @return this
    */
-  public dropShadowDirectionally(normX: number, normY: number, normZ: number, planeX: number, planeY: number, planeZ: number, lightX: number, lightY: number, lightZ: number): Matrix4 {
+  public dropShadowDirectionally(normX: number, normY: number, normZ: number, planeX: number, planeY: number, planeZ: number, directionalLightX: number, directionalLightY: number, directionalLightZ: number): Matrix4 {
     const a = planeX * normX + planeY * normY + planeZ * normZ;
-    return this.dropShadow([normX, normY, normZ, -a], [lightX, lightY, lightZ, 0]);
+    return this.dropShadow([normX, normY, normZ, -a], [directionalLightX, directionalLightY, directionalLightZ, 0]);
   }
 }
 /**

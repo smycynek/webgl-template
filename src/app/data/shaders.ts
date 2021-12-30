@@ -1,45 +1,61 @@
 export class Shaders {
   public static readonly VSHADER_SOURCE =
-
-    'attribute vec4 a_TriangleColor;\n' +
-    'attribute vec4 a_Normal;\n' +  // Normal is hard coded
-    'uniform vec3 u_LightColor;\n' +
-    'uniform vec3 u_LightDirection;\n' +
-    'attribute vec4 a_Position;\n' +
-    'uniform mat4 u_ViewMatrix;\n' +
-    'uniform mat4 u_ProjMatrix;\n' +
-    'uniform mat4 u_RotationMatrix;\n' +
-    'uniform mat4 u_TranslationMatrix;\n' +
-    'attribute float a_PointSize;\n' +  // Only used in point rendering
-    'varying vec4 v_Color;\n' + // Fragment color
-    'void main() {\n' +
+    `
+    attribute vec4 a_TriangleColor;
+    attribute vec4 a_Normal;   // Normal is hard coded
+    uniform vec3 u_LightColor;
+    uniform vec3 u_LightDirection;
+    uniform vec3 u_LightPosition;
+    uniform bool u_UseDirectionalLight;
+    attribute vec4 a_Position;
+    uniform mat4 u_ViewMatrix;
+    uniform mat4 u_ProjMatrix;
+    uniform mat4 u_RotationMatrix;
+    uniform mat4 u_TranslationMatrix;
+    attribute float a_PointSize;   // Only used in point rendering
+    varying vec4 v_Color;  // Fragment color
+    void main() {
 
     // Rotate the normals along with the model, as they are provided in advance and not
     // calculated after the final translation.
-    '  vec4 a_NormalR = u_TranslationMatrix * u_RotationMatrix * a_Normal;\n' +
-    '  vec3 normal = normalize(a_NormalR.xyz);\n' +
+      vec4 a_NormalR = u_TranslationMatrix * u_RotationMatrix * a_Normal;
+      vec3 normal = normalize(a_NormalR.xyz);
 
     // Dot product of the light direction and the orientation of a surface (the normal)
-    '  float brightnessScalar = max(dot(u_LightDirection, normal), 0.0);\n' +
-    // Calculate how much to scale the color down by (Lambert Cosine Rule)
-    '  vec3 finalColor = u_LightColor * a_TriangleColor.rgb * brightnessScalar;\n' +
-    '  v_Color = vec4(finalColor, a_TriangleColor.a);\n' +
-    '  gl_Position =  u_ProjMatrix * u_ViewMatrix * u_TranslationMatrix * u_RotationMatrix * a_Position;\n' + // Set the vertex coordinates of the point
-    '  gl_PointSize = a_PointSize;\n' +
-    '}\n';
+      vec3 light_direction;
+      if (u_UseDirectionalLight == true) {
+       light_direction = u_LightDirection;
+      }
+      else { // Note -- with the point light model, the normal is the same for both triangles of each face,
+        // but the vertex position varies,
+        // so you get some nice pseudo pixel-level shading, but not quite Phong-level
+        vec4 vertex_position = u_ViewMatrix * u_TranslationMatrix * u_RotationMatrix * a_Position;
+        vec3 point_light_direction = normalize(u_LightPosition - vec3(vertex_position));
+        light_direction = point_light_direction;
+      }
+      float brightnessScalar = max(dot(light_direction, normal), 0.0);
+     // Calculate how much to scale the color down by (Lambert Cosine Rule)
+      vec3 finalColor = u_LightColor * a_TriangleColor.rgb * brightnessScalar;
+      v_Color = vec4(finalColor, a_TriangleColor.a);
+      gl_Position =  u_ProjMatrix * u_ViewMatrix * u_TranslationMatrix * u_RotationMatrix * a_Position;  // Set the vertex coordinates of the point
+      gl_PointSize = a_PointSize;
+    }
+    `;
 
   // Fragment shader program
   public static readonly FSHADER_SOURCE =
-    'precision mediump float;\n' +
-    'uniform bool u_UseStaticColor;\n' +
-    'varying vec4 v_Color;\n' +
-    'uniform vec4 u_PointColor;\n' +
-    'void main() {\n' +
-    'if (u_UseStaticColor == true) {\n' +  // If true, we are rendering points, so only use one color
-    '  gl_FragColor = u_PointColor;\n' + // Set all point colors to the single point color.
-    '}\n' +
-    'else {\n' +
-    '  gl_FragColor = v_Color;\n' + // Set the fragment color to the varying color
-    '}\n' +
-    '}\n';
+    `
+    precision mediump float;
+    uniform bool u_UseStaticColor;
+    varying vec4 v_Color;
+    uniform vec4 u_PointColor;
+    void main() {
+    if (u_UseStaticColor == true) {   // If true, we are rendering points, so only use one color
+      gl_FragColor = u_PointColor;  // Set all point colors to the single point color.
+    }
+    else {
+      gl_FragColor = v_Color;  // Set the fragment color to the varying color
+    }
+  }
+    `;
 }
