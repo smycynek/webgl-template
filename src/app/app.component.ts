@@ -48,7 +48,7 @@ export class AppComponent {
   public perspectiveNear: number = Defaults.perspectiveNear;
   public perspectiveFar: number = Defaults.perspectiveFar;
   public projectionType: string = Defaults.projectionType;
-  public title: string = 'WebGL Angular/TypeScript/Webpack Template - Desktop';
+  public title: string = 'WebGL Angular/TypeScript/Webpack Template';
 
   public setPointLightMode() {
     this.lightingType = Constants.POINT_LIGHT;

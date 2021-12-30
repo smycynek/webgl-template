@@ -2,207 +2,18 @@
   <h1 class="banner">
     {{title}}
   </h1>
+    <div class="smallLabel"><a href="https://github.com/smycynek/webgl-template">
+        https://github.com/smycynek/webgl-template
+      </a></div>
   <canvas style="padding-bottom: 0px; margin-bottom: 0px;border:1px solid #000000;" id="gl_canvas" height="325"
     width="325"></canvas>
 
   <div style="text-align:left;margin:0.25em;padding:0.25em" class="container">
-
     <div class="row spaced">
-      <div class="col-sm-2">
-        <span class="label">Translate</span>
-      </div>
       <div class="col-sm-1">
-        <div class="smallLabel">X</div><input step="0.1" [(ngModel)]="transX" #ctrl="ngModel" (change)="start()"
-          type="number" />
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Y</div><input step="0.1" [(ngModel)]="transY" #ctrl="ngModel" (change)="start()"
-          type="number" />
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Z</div><input step="0.1" [(ngModel)]="transZ" #ctrl="ngModel" (change)="start()"
-          type="number" />
-      </div>
-    </div>
-
-    <div class="row spaced">
-      <div class="col-sm-2">
-        <span class="label">Rotate</span>
-      </div>
-
-      <div class="col-sm-1">
-        <div class="smallLabel">X</div> <input step="1" [(ngModel)]="rotateX" #ctrl="ngModel" (change)="start()"
-          type="number" />
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Y</div> <input step="1" [(ngModel)]="rotateY" #ctrl="ngModel" (change)="start()"
-          type="number" />
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Z</div> <input step="1" [(ngModel)]="rotateZ" #ctrl="ngModel" (change)="start()"
-          type="number" />
-      </div>
-    </div>
-
-
-    <div class="row spaced">
-      <div class="col-sm-2">
-        <span class="label">Ortho</span>
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Left</div><input [disabled]="projectionType =='PERSPECTIVE'" width="2em" step="0.1"
-          [(ngModel)]="orthoLeft" #ctrl="ngModel" (change)="start()" type="number" />
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Right</div><input [disabled]="projectionType =='PERSPECTIVE'" step="0.1"
-          [(ngModel)]="orthoRight" #ctrl="ngModel" (change)="start()" type="number" />
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Bottom</div><input [disabled]="projectionType =='PERSPECTIVE'" step="0.1"
-          [(ngModel)]="orthoBottom" #ctrl="ngModel" (change)="start()" type="number" />
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Top</div><input [disabled]="projectionType =='PERSPECTIVE'" step="0.1"
-          [(ngModel)]="orthoTop" #ctrl="ngModel" (change)="start()" type="number" />
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Near</div><input [disabled]="projectionType =='PERSPECTIVE'" step="0.1"
-          [(ngModel)]="orthoNear" #ctrl="ngModel" (change)="start()" type="number" />
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Far</div><input [disabled]="projectionType =='PERSPECTIVE'" step="0.1"
-          [(ngModel)]="orthoFar" #ctrl="ngModel" (change)="start()" type="number" />
-      </div>
-    </div>
-
-
-
-    <div class="row spaced">
-      <div class="col-sm-2">
-        <span class="label">Perspective</span>
-      </div>
-      <div class="col-sm-1">
-
-        <div class="smallLabel">Angle</div><input [disabled]="projectionType =='ORTHO'" step="0.1"
-          [(ngModel)]="perspectiveFieldOfView" #ctrl="ngModel" (change)="start()" type="number" />
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Aspect</div><input [disabled]="projectionType =='ORTHO'" step="0.1"
-          [(ngModel)]="perspectiveAspectRatio" #ctrl="ngModel" (change)="start()" type="number" />
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Near</div><input [disabled]="projectionType =='ORTHO'" step="0.1"
-          [(ngModel)]="perspectiveNear" #ctrl="ngModel" (change)="start()" type="number" />
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Far</div><input [disabled]="projectionType =='ORTHO'" step="0.1"
-          [(ngModel)]="perspectiveFar" #ctrl="ngModel" (change)="start()" type="number" />
-      </div>
-    </div>
-
-
-
-    <div class="row spaced">
-      <div class="col-sm-2">
-        <span class="label">Up</span>
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">X</div><input step="0.1" [(ngModel)]="upX" #ctrl="ngModel" (change)="start()"
-          type="number" />
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Y</div><input step="0.1" [(ngModel)]="upY" #ctrl="ngModel" (change)="start()"
-          type="number" />
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Z</div><input step="0.1" [(ngModel)]="upZ" #ctrl="ngModel" (change)="start()"
-          type="number" />
-      </div>
-    </div>
-
-
-
-
-
-    <div class="row spaced">
-      <div class="col-sm-2">
-        <span class="label">Eye</span>
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">X</div><input step="0.1" [(ngModel)]="eyeX" #ctrl="ngModel" (change)="start()"
-          type="number" />
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Y</div><input step="0.1" [(ngModel)]="eyeY" #ctrl="ngModel" (change)="start()"
-          type="number" />
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Z</div><input step="0.1" [(ngModel)]="eyeZ" #ctrl="ngModel" (change)="start()"
-          type="number" />
-      </div>
-    </div>
-
-
-
-    <div class="row spaced">
-      <div class="col-sm-2">
-        <span class="label">LookAt</span>
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">X</div><input step="0.1" [(ngModel)]="lookX" #ctrl="ngModel" (change)="start()"
-          type="number" />
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Y</div><input step="0.1" [(ngModel)]="lookY" #ctrl="ngModel" (change)="start()"
-          type="number" />
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Z</div><input step="0.1" [(ngModel)]="lookZ" #ctrl="ngModel" (change)="start()"
-          type="number" />
-      </div>
-    </div>
-
-    <div class="row spaced">
-      <div class="col-sm-2">
-        <span class="label">Directional Light</span>
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">X</div><input [disabled]="lightingType =='POINT_LIGHT'" step="0.1"
-          [(ngModel)]="directionalLightX" #ctrl="ngModel" (change)="start()" type="number" />
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Y</div><input [disabled]="lightingType =='POINT_LIGHT'" step="0.1"
-          [(ngModel)]="directionalLightY" #ctrl="ngModel" (change)="start()" type="number" />
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Z</div><input [disabled]="lightingType =='POINT_LIGHT'" step="0.1"
-          [(ngModel)]="directionalLightZ" #ctrl="ngModel" (change)="start()" type="number" />
-      </div>
-    </div>
-
-    <div class="row spaced">
-      <div class="col-sm-2">
-        <span class="label">Point Light</span>
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">X</div><input [disabled]="lightingType =='DIRECTIONAL_LIGHT'" step="0.1"
-          [(ngModel)]="pointLightX" #ctrl="ngModel" (change)="start()" type="number" />
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Y</div><input [disabled]="lightingType =='DIRECTIONAL_LIGHT'" step="0.1"
-          [(ngModel)]="pointLightY" #ctrl="ngModel" (change)="start()" type="number" />
-      </div>
-      <div class="col-sm-1">
-        <div class="smallLabel">Z</div><input [disabled]="lightingType =='DIRECTIONAL_LIGHT'" step="0.1"
-          [(ngModel)]="pointLightZ" #ctrl="ngModel" (change)="start()" type="number" />
-      </div>
-    </div>
-
-    <div class="row spaced">
-      <div class="col-sm-2">
         <span class="label">Lighting</span>
       </div>
-      <div class="col-sm-2">
+      <div class="col-sm-1">
         <input class="radioSpaced" type="radio" name="rlightingType" (click)="setDirectionalLightMode()" />
         <span class="smallLabel">Directional</span>
       </div>
@@ -210,41 +21,239 @@
         <input checked class="radioSpaced" type="radio" name="rlightingType" (click)="setPointLightMode()" />
         <span class="smallLabel">Point</span>
       </div>
-
-
     </div>
-
     <div class="row spaced">
-      <div class="col-sm-2">
+      <div class="col-sm-1">
         <span class="label">Entity</span>
       </div>
-      <div class="col-sm-2">
+      <div class="col-sm-1">
         <input class="radioSpaced" type="radio" name="rentityType" (click)="setPointMode()" />
         <span class="smallLabel">Vertex</span>
       </div>
-      <div class="col-sm-2">
+      <div class="col-sm-1">
         <input class="radioSpaced" checked type="radio" name="rentityType" (click)="setTriangleMode()" />
         <span class="smallLabel">Triangle</span>
       </div>
     </div>
 
     <div class="row spaced">
-      <div class="col-sm-2">
+      <div class="col-sm-1">
         <span class="label">Projection</span>
       </div>
-      <div class="col-sm-2">
+      <div class="col-sm-1">
         <input class="radioSpaced" type="radio" name="rprojectionType" (click)="setOrthoMode()" /><span
           class="smallLabel">Ortho</span>
       </div>
-      <div class="col-sm-2">
+      <div class="col-sm-1">
         <input class="radioSpaced" checked type="radio" name="rprojectionType" (click)="setPerspectiveMode()" /><span
           class="smallLabel">Perspective</span>
       </div>
-
     </div>
-    <hr />
-    <cite><a href="https://github.com/smycynek/webgl-template">
-        https://github.com/smycynek/webgl-template
-      </a></cite>
 
   </div>
+
+  <details>
+    <summary>More controls</summary>
+
+
+
+    <div style="text-align:left;margin:0.25em;padding:0.25em" class="container">
+
+      <div class="row spaced">
+        <div class="col-sm-2">
+          <span class="label">Translate</span>
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">X</div><input step="0.1" [(ngModel)]="transX" #ctrl="ngModel" (change)="start()"
+            type="number" />
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Y</div><input step="0.1" [(ngModel)]="transY" #ctrl="ngModel" (change)="start()"
+            type="number" />
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Z</div><input step="0.1" [(ngModel)]="transZ" #ctrl="ngModel" (change)="start()"
+            type="number" />
+        </div>
+      </div>
+
+      <div class="row spaced">
+        <div class="col-sm-2">
+          <span class="label">Rotate</span>
+        </div>
+
+        <div class="col-sm-1">
+          <div class="smallLabel">X</div> <input step="1" [(ngModel)]="rotateX" #ctrl="ngModel" (change)="start()"
+            type="number" />
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Y</div> <input step="1" [(ngModel)]="rotateY" #ctrl="ngModel" (change)="start()"
+            type="number" />
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Z</div> <input step="1" [(ngModel)]="rotateZ" #ctrl="ngModel" (change)="start()"
+            type="number" />
+        </div>
+      </div>
+
+
+      <div class="row spaced">
+        <div class="col-sm-2">
+          <span class="label">Ortho</span>
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Left</div><input [disabled]="projectionType =='PERSPECTIVE'" width="2em" step="0.1"
+            [(ngModel)]="orthoLeft" #ctrl="ngModel" (change)="start()" type="number" />
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Right</div><input [disabled]="projectionType =='PERSPECTIVE'" step="0.1"
+            [(ngModel)]="orthoRight" #ctrl="ngModel" (change)="start()" type="number" />
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Bottom</div><input [disabled]="projectionType =='PERSPECTIVE'" step="0.1"
+            [(ngModel)]="orthoBottom" #ctrl="ngModel" (change)="start()" type="number" />
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Top</div><input [disabled]="projectionType =='PERSPECTIVE'" step="0.1"
+            [(ngModel)]="orthoTop" #ctrl="ngModel" (change)="start()" type="number" />
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Near</div><input [disabled]="projectionType =='PERSPECTIVE'" step="0.1"
+            [(ngModel)]="orthoNear" #ctrl="ngModel" (change)="start()" type="number" />
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Far</div><input [disabled]="projectionType =='PERSPECTIVE'" step="0.1"
+            [(ngModel)]="orthoFar" #ctrl="ngModel" (change)="start()" type="number" />
+        </div>
+      </div>
+
+
+
+      <div class="row spaced">
+        <div class="col-sm-2">
+          <span class="label">Perspective</span>
+        </div>
+        <div class="col-sm-1">
+
+          <div class="smallLabel">Angle</div><input [disabled]="projectionType =='ORTHO'" step="0.1"
+            [(ngModel)]="perspectiveFieldOfView" #ctrl="ngModel" (change)="start()" type="number" />
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Aspect</div><input [disabled]="projectionType =='ORTHO'" step="0.1"
+            [(ngModel)]="perspectiveAspectRatio" #ctrl="ngModel" (change)="start()" type="number" />
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Near</div><input [disabled]="projectionType =='ORTHO'" step="0.1"
+            [(ngModel)]="perspectiveNear" #ctrl="ngModel" (change)="start()" type="number" />
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Far</div><input [disabled]="projectionType =='ORTHO'" step="0.1"
+            [(ngModel)]="perspectiveFar" #ctrl="ngModel" (change)="start()" type="number" />
+        </div>
+      </div>
+
+
+
+      <div class="row spaced">
+        <div class="col-sm-2">
+          <span class="label">Up</span>
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">X</div><input step="0.1" [(ngModel)]="upX" #ctrl="ngModel" (change)="start()"
+            type="number" />
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Y</div><input step="0.1" [(ngModel)]="upY" #ctrl="ngModel" (change)="start()"
+            type="number" />
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Z</div><input step="0.1" [(ngModel)]="upZ" #ctrl="ngModel" (change)="start()"
+            type="number" />
+        </div>
+      </div>
+
+
+
+
+
+      <div class="row spaced">
+        <div class="col-sm-2">
+          <span class="label">Eye</span>
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">X</div><input step="0.1" [(ngModel)]="eyeX" #ctrl="ngModel" (change)="start()"
+            type="number" />
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Y</div><input step="0.1" [(ngModel)]="eyeY" #ctrl="ngModel" (change)="start()"
+            type="number" />
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Z</div><input step="0.1" [(ngModel)]="eyeZ" #ctrl="ngModel" (change)="start()"
+            type="number" />
+        </div>
+      </div>
+
+
+
+      <div class="row spaced">
+        <div class="col-sm-2">
+          <span class="label">LookAt</span>
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">X</div><input step="0.1" [(ngModel)]="lookX" #ctrl="ngModel" (change)="start()"
+            type="number" />
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Y</div><input step="0.1" [(ngModel)]="lookY" #ctrl="ngModel" (change)="start()"
+            type="number" />
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Z</div><input step="0.1" [(ngModel)]="lookZ" #ctrl="ngModel" (change)="start()"
+            type="number" />
+        </div>
+      </div>
+
+      <div class="row spaced">
+        <div class="col-sm-2">
+          <span class="label">Directional Light</span>
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">X</div><input [disabled]="lightingType =='POINT_LIGHT'" step="0.1"
+            [(ngModel)]="directionalLightX" #ctrl="ngModel" (change)="start()" type="number" />
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Y</div><input [disabled]="lightingType =='POINT_LIGHT'" step="0.1"
+            [(ngModel)]="directionalLightY" #ctrl="ngModel" (change)="start()" type="number" />
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Z</div><input [disabled]="lightingType =='POINT_LIGHT'" step="0.1"
+            [(ngModel)]="directionalLightZ" #ctrl="ngModel" (change)="start()" type="number" />
+        </div>
+      </div>
+
+      <div class="row spaced">
+        <div class="col-sm-2">
+          <span class="label">Point Light</span>
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">X</div><input [disabled]="lightingType =='DIRECTIONAL_LIGHT'" step="0.1"
+            [(ngModel)]="pointLightX" #ctrl="ngModel" (change)="start()" type="number" />
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Y</div><input [disabled]="lightingType =='DIRECTIONAL_LIGHT'" step="0.1"
+            [(ngModel)]="pointLightY" #ctrl="ngModel" (change)="start()" type="number" />
+        </div>
+        <div class="col-sm-1">
+          <div class="smallLabel">Z</div><input [disabled]="lightingType =='DIRECTIONAL_LIGHT'" step="0.1"
+            [(ngModel)]="pointLightZ" #ctrl="ngModel" (change)="start()" type="number" />
+        </div>
+      </div>
+
+    </div>
+
+  </details>
+
+
+
+</div>
