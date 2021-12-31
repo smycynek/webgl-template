@@ -106,3 +106,6 @@ dist
 
 glta/
 glta.zip
+
+.DS_Store
+./src/DS_Store
