@@ -18,6 +18,7 @@ export class Matrix4 {
   public elements: Float32Array;
   constructor(opt_src?: Matrix4) {
     let i, s, d;
+    // eslint-disable-next-line no-prototype-builtins
     if (opt_src && typeof opt_src === 'object' && opt_src.hasOwnProperty('elements')) {
       s = opt_src.elements;
       d = new Float32Array(16);

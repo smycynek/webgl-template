@@ -1,11 +1,9 @@
 import { Component } from '@angular/core';
-
 import { Constants } from './data/constants';
 import { Defaults } from './data/defaults';
 import { Shaders } from './data/shaders';
 import { Matrix4 } from './util/math';
 import { GlUtil } from './util/glUtil';
-import { SplitInterpolation } from '@angular/compiler';
 
 let globalApp: AppComponent;
 
@@ -19,7 +17,7 @@ export class AppComponent {
     globalApp = this;
     this.spin();
   }
-  public init: boolean = false;
+  public init = false;
   public directionalLightX: number = Defaults.directionalLightX;
   public directionalLightY: number = Defaults.directionalLightY;
   public directionalLightZ: number = Defaults.directionalLightZ;
@@ -54,9 +52,9 @@ export class AppComponent {
   public perspectiveNear: number = Defaults.perspectiveNear;
   public perspectiveFar: number = Defaults.perspectiveFar;
   public projectionType: string = Defaults.projectionType;
-  public title: string = 'WebGL Angular/TypeScript/Webpack Template';
-  public spinning: boolean = true;
-  public logging: boolean = false;
+  public title = 'WebGL Angular/TypeScript/Webpack Template';
+  public spinning = true;
+  public logging = false;
 
   public setPointLightMode() {
     this.lightingType = Constants.POINT_LIGHT;
@@ -110,7 +108,7 @@ export class AppComponent {
 
   public start(): void {
     this.init = true;
-    let gl = this.getContext();
+    const gl = this.getContext();
     if (!gl) {
       return;
     }
@@ -134,8 +132,6 @@ export class AppComponent {
     }
   }
 
-
-
   private getCanvas(): HTMLElement | null {
     const canvas: HTMLElement | null = document.getElementById('gl_canvas');
     if (!canvas) {
@@ -155,12 +151,11 @@ export class AppComponent {
     }
     if (canvas instanceof HTMLCanvasElement) {
       // Get the rendering context for WebGL
-      gl = canvas.getContext('webgl')
+      gl = canvas.getContext('webgl');
       if (!gl) {
         console.log('Failed to get the rendering context for WebGL');
         return null;
       }
-
     }
     else {
       console.log('Canvas is wrong type');
@@ -179,7 +174,7 @@ export class AppComponent {
         this.orthoTop,
         this.orthoNear,
         this.orthoFar
-      )
+      );
     }
     else {
       projMatrix.setPerspective(
@@ -187,7 +182,7 @@ export class AppComponent {
         this.perspectiveAspectRatio,
         this.perspectiveNear,
         this.perspectiveFar,
-      )
+      );
     }
     return projMatrix;
   }
@@ -231,7 +226,7 @@ export class AppComponent {
     const indexBuffer = gl.createBuffer();
 
     if (!indexBuffer) {
-      console.log('No index buffer')
+      console.log('No index buffer');
       return -1;
     }
     if (!GlUtil.initArrayBuffer(gl, 'a_Position', Constants.vertices, 3, gl.FLOAT)) return -1;
@@ -293,5 +288,4 @@ export class AppComponent {
     console.log(this.lightingType);
     Constants.print();
   }
-
 }
