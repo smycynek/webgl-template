@@ -14,36 +14,36 @@ export class GlUtil {
     return true;
   }
 
-public static initArrayBuffer(gl: any, attribute: string, data: any, num: number, type: any): boolean {
+  public static initArrayBuffer(gl: any, attribute: string, data: any, num: number, type: any): boolean {
   // Create a buffer object
-  const buffer = gl.createBuffer();
-  if (!buffer) {
-    console.log('Failed to create the buffer object');
-    return false;
+    const buffer = gl.createBuffer();
+    if (!buffer) {
+      console.log('Failed to create the buffer object');
+      return false;
+    }
+    // Write date into the buffer object
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    // Assign the buffer object to the attribute variable
+    const a_attribute = gl.getAttribLocation(gl.program, attribute);
+
+    const err = gl.getError();
+    if (err !== 0) {
+      console.log(`initArrayBuffer getAttribLocation() ${attribute} error: ${err}`);
+    }
+
+    if (a_attribute < 0) {
+      console.log('Failed to get the storage location of ' + attribute);
+      return false;
+    }
+    gl.vertexAttribPointer(a_attribute, num, type, false, 0, 0);
+    // Enable the assignment of the buffer object to the attribute variable
+    gl.enableVertexAttribArray(a_attribute);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    return true;
   }
-  // Write date into the buffer object
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-  // Assign the buffer object to the attribute variable
-  const a_attribute = gl.getAttribLocation(gl.program, attribute);
-
-  const err = gl.getError();
-  if (err !== 0) {
-    console.log(`initArrayBuffer getAttribLocation() ${attribute} error: ${err}`);
-  }
-
-  if (a_attribute < 0) {
-    console.log('Failed to get the storage location of ' + attribute);
-    return false;
-  }
-  gl.vertexAttribPointer(a_attribute, num, type, false, 0, 0);
-  // Enable the assignment of the buffer object to the attribute variable
-  gl.enableVertexAttribArray(a_attribute);
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, null);
-
-  return true;
-}
 
   /**
    * Create the linked program object
