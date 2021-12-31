@@ -5,7 +5,9 @@ import { Defaults } from './data/defaults';
 import { Shaders } from './data/shaders';
 import { Matrix4 } from './util/math';
 import { GlUtil } from './util/glUtil';
-import { ThisReceiver } from '@angular/compiler';
+import { SplitInterpolation } from '@angular/compiler';
+
+let globalApp: AppComponent;
 
 @Component({
   selector: 'app-root',
@@ -13,6 +15,10 @@ import { ThisReceiver } from '@angular/compiler';
   styles: []
 })
 export class AppComponent {
+  constructor() {
+    globalApp = this;
+    this.spin();
+  }
   public init: boolean = false;
   public directionalLightX: number = Defaults.directionalLightX;
   public directionalLightY: number = Defaults.directionalLightY;
@@ -49,11 +55,31 @@ export class AppComponent {
   public perspectiveFar: number = Defaults.perspectiveFar;
   public projectionType: string = Defaults.projectionType;
   public title: string = 'WebGL Angular/TypeScript/Webpack Template';
+  public spinning: boolean = true;
+  public logging: boolean = false;
 
   public setPointLightMode() {
     this.lightingType = Constants.POINT_LIGHT;
     this.start();
   }
+
+  public toggleSpinMode() {
+    this.spinning = !this.spinning;
+    this.spin();
+  }
+  public spin() {
+    if (this.spinning) {
+      requestAnimationFrame(function () {
+        globalApp.rotateY += 1;
+        if (globalApp.rotateY == 360) {
+          globalApp.rotateY = 0;
+        }
+        globalApp.start();
+        globalApp.spin();
+      });
+    }
+  }
+
   public setDirectionalLightMode() {
     this.lightingType = Constants.DIRECTIONAL_LIGHT;
     this.start();
@@ -82,7 +108,7 @@ export class AppComponent {
     }
   }
 
-  public start() {
+  public start(): void {
     this.init = true;
     let gl = this.getContext();
     if (!gl) {
@@ -96,7 +122,9 @@ export class AppComponent {
     GlUtil.initShaders(gl, Shaders.VSHADER_SOURCE, Shaders.FSHADER_SOURCE);
 
     const pointCount = this.loadGLData(gl);
-    this.logState();
+    if (this.logging) {
+      this.logState();
+    }
 
     if (this.entityType == Constants.VERTEX) {
       gl.drawArrays(gl.POINTS, 0, Constants.vertices.length / 3);
@@ -106,10 +134,21 @@ export class AppComponent {
     }
   }
 
+
+
+  private getCanvas(): HTMLElement | null {
+    const canvas: HTMLElement | null = document.getElementById('gl_canvas');
+    if (!canvas) {
+      console.log('Failed to get canvas');
+      return null;
+    }
+    return canvas;
+  }
+
   private getContext(): any | null {
     let gl;
 
-    const canvas: HTMLElement | null = document.getElementById('gl_canvas');
+    const canvas = this.getCanvas();
     if (!canvas) {
       console.log('Failed to get canvas');
       return null;
