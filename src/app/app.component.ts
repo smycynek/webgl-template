@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
-import { Constants } from './data/constants';
+import { Constants, ModelChoice } from './data/constants';
 import { Defaults } from './data/defaults';
 import { Shaders } from './data/shaders';
 import { Matrix4 } from './util/math';
 import { GlUtil } from './util/glUtil';
-
+import { DrawingInfo, OBJDoc } from './util/objDoc';
+import { CubeHardCoded } from './data/models/cubeHardcoded';
+import { NinObj } from './data/models/ninObj';
+import { RookObj } from './data/models/rookObj';
 let globalApp: AppComponent;
 
 @Component({
@@ -17,6 +20,7 @@ export class AppComponent {
     globalApp = this;
     this.spin();
   }
+  public modelChoice: ModelChoice = Defaults.modelChoice;
   public init = false;
   public directionalLightX: number = Defaults.directionalLightX;
   public directionalLightY: number = Defaults.directionalLightY;
@@ -55,6 +59,22 @@ export class AppComponent {
   public title = 'WebGL Angular/TypeScript/Webpack Template';
   public spinning = true;
   public logging = false;
+
+
+  public setCubeModel() {
+    this.modelChoice = ModelChoice.HardCodedCube;
+    this.start();
+  }
+
+  public setRookModel() {
+    this.modelChoice = ModelChoice.ChessRook;
+    this.start();
+  }
+
+  public setNinModel() {
+    this.modelChoice = ModelChoice.NineInchNails;
+    this.start();
+  }
 
   public setPointLightMode() {
     this.lightingType = Constants.POINT_LIGHT;
@@ -112,8 +132,10 @@ export class AppComponent {
     if (!gl) {
       return;
     }
+
+    gl.enable(gl.DEPTH_TEST);
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BIT);
     gl.enable(gl.CULL_FACE);
     gl.cullFace(gl.BACK);
 
@@ -125,10 +147,18 @@ export class AppComponent {
     }
 
     if (this.entityType == Constants.VERTEX) {
-      gl.drawArrays(gl.POINTS, 0, Constants.vertices.length / 3);
+      if (this.modelChoice == ModelChoice.HardCodedCube) {
+        // These hard coded vertices are defined with some redundancy, so
+        // using a different way to get point count;
+        gl.drawArrays(gl.POINTS, 0, CubeHardCoded.vertices.length / 3);
+      }
+      else {
+        gl.drawArrays(gl.POINTS, 0, pointCount);
+      }
     }
     else {
-      gl.drawElements(gl.TRIANGLES, pointCount, gl.UNSIGNED_BYTE, 0);
+
+      gl.drawElements(gl.TRIANGLES, pointCount, gl.UNSIGNED_SHORT, 0);
     }
   }
 
@@ -229,8 +259,39 @@ export class AppComponent {
       console.log('No index buffer');
       return -1;
     }
-    if (!GlUtil.initArrayBuffer(gl, 'a_Position', Constants.vertices, 3, gl.FLOAT)) return -1;
-    if (!GlUtil.initArrayBuffer(gl, 'a_Normal', Constants.normals, 3, gl.FLOAT)) return -1;
+
+    const useObj = true;
+
+    let vertices: Float32Array ;
+    let normals: Float32Array;
+    let indices: Uint16Array;
+
+    if (this.modelChoice == ModelChoice.NineInchNails) {
+      const parsedObj: OBJDoc = new OBJDoc('');
+      parsedObj.parse(NinObj.data, 10, true);
+      const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
+      vertices = drawingInfo.vertices;
+      normals = drawingInfo.normals;
+      indices = drawingInfo.indices;
+      this.rotateX = 0;
+    } else if (this.modelChoice == ModelChoice.ChessRook)  {
+      const parsedObj: OBJDoc = new OBJDoc('');
+      this.rotateX = 90;
+      parsedObj.parse(RookObj.data, 2, false);
+      const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
+      vertices = drawingInfo.vertices;
+      normals = drawingInfo.normals;
+      indices = drawingInfo.indices;
+    }
+    else {
+      this.rotateX = 0;
+      vertices = CubeHardCoded.vertices;
+      normals = CubeHardCoded.normals;
+      indices = CubeHardCoded.indices;
+    }
+
+    if (!GlUtil.initArrayBuffer(gl, 'a_Position', vertices, 3, gl.FLOAT)) return -1;
+    if (!GlUtil.initArrayBuffer(gl, 'a_Normal', normals, 3, gl.FLOAT)) return -1;
 
     const translationMatrix = this.setupTranslation();
     const rotationMatrix = this.setupRotation();
@@ -277,9 +338,9 @@ export class AppComponent {
     gl.vertexAttrib4fv(a_TriangleColor, Constants.triangleColor.elements);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, Constants.indices, gl.STATIC_DRAW);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 
-    return Constants.indices.length;
+    return indices.length;
   }
 
   private logState(): void {

@@ -2,13 +2,31 @@
   <h1 class="banner">
     {{title}}
   </h1>
-    <div class="smallLabel"><a href="https://github.com/smycynek/webgl-template">
-        https://github.com/smycynek/webgl-template
-      </a></div>
-  <canvas (click)="toggleSpinMode()" style="padding-bottom: 0px; margin-bottom: 0px;border:1px solid #000000;" id="gl_canvas" height="325"
-    width="325"></canvas> <div class="smallLabel">Tap image to toggle spin.</div>
+  <div class="smallLabel"><a href="https://github.com/smycynek/webgl-template">
+      https://github.com/smycynek/webgl-template
+    </a></div>
+  <canvas (click)="toggleSpinMode()" style="padding-bottom: 0px; margin-bottom: 0px;border:1px solid #000000;"
+    id="gl_canvas" height="325" width="325"></canvas>
+  <div class="smallLabel">Tap image to toggle spin.</div>
 
   <div style="text-align:left;margin:0.25em;padding:0.25em" class="container">
+    <div class="row">
+      <div class="col-sm-1">
+        <span class="label">Model</span>
+      </div>
+      <div class="col-sm-1">
+        <input checked class="radioSpaced" type="radio" name="rModelChoice" (click)="setCubeModel()" />
+        <span class="smallLabel">Cube</span>
+      </div>
+      <div class="col-sm-1">
+        <input class="radioSpaced" type="radio" name="rModelChoice" (click)="setNinModel()" />
+        <span class="smallLabel">NIN</span>
+      </div>
+      <div class="col-sm-2">
+        <input class="radioSpaced" type="radio" name="rModelChoice" (click)="setRookModel()" />
+        <span class="smallLabel">Rook</span>
+      </div>
+    </div>
     <div class="row">
       <div class="col-sm-1">
         <span class="label">Lighting</span>
