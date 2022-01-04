@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
 import { Constants, ModelChoice } from './resources/constants';
 import { Defaults } from './resources/defaults';
-import { Shaders } from './resources/shaders';
 import { Matrix4 } from './util/math';
 import { GlUtil } from './util/glUtil';
 import { DrawingInfo, OBJDoc } from './util/objDoc';
+import fragmentShaderSrc from '../assets/shaders/fragment-shader.glsl';
+import vertexShaderSrc from '../assets/shaders/vertex-shader.glsl';
+
+
 let globalApp: AppComponent;
 
 @Component({
@@ -156,7 +159,7 @@ export class AppComponent {
     gl.enable(gl.CULL_FACE);
     gl.cullFace(gl.BACK);
 
-    GlUtil.initShaders(gl, Shaders.VSHADER_SOURCE, Shaders.FSHADER_SOURCE);
+    GlUtil.initShaders(gl, vertexShaderSrc, fragmentShaderSrc);
 
     const pointCount = this.loadGLData(gl);
     if (this.logging) {
