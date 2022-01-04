@@ -1,7 +1,7 @@
 import { Constants, ModelChoice } from './constants';
 
 export class Defaults {
-  public static readonly modelChoice = ModelChoice.HardCodedCube;
+  public static readonly modelChoice = ModelChoice.Cube;
   public static readonly scale = 10.0;
   public static readonly directionalLightX: number = 0.2;
   public static readonly directionalLightY: number = 0.4;

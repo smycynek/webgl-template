@@ -2,7 +2,7 @@ import { Vector3, Vector4 } from '../util/math';
 
 
 export enum ModelChoice {
-  HardCodedCube = 1,
+  Cube = 1,
   NineInchNails = 2,
   ChessRook = 3,
 }

@@ -1,13 +1,10 @@
 import { Component } from '@angular/core';
-import { Constants, ModelChoice } from './data/constants';
-import { Defaults } from './data/defaults';
-import { Shaders } from './data/shaders';
+import { Constants, ModelChoice } from './resources/constants';
+import { Defaults } from './resources/defaults';
+import { Shaders } from './resources/shaders';
 import { Matrix4 } from './util/math';
 import { GlUtil } from './util/glUtil';
 import { DrawingInfo, OBJDoc } from './util/objDoc';
-import { CubeHardCoded } from './data/models/cubeHardcoded';
-import { NinObj } from './data/models/ninObj';
-import { RookObj } from './data/models/rookObj';
 let globalApp: AppComponent;
 
 @Component({
@@ -60,9 +57,12 @@ export class AppComponent {
   public spinning = true;
   public logging = false;
 
+  private ninData = '';
+  private rookData = '';
+  private cubeData = '';
 
   public setCubeModel() {
-    this.modelChoice = ModelChoice.HardCodedCube;
+    this.modelChoice = ModelChoice.Cube;
     this.start();
   }
 
@@ -122,7 +122,24 @@ export class AppComponent {
   }
   public initScreen() {
     if (!this.init) {
-      this.start();
+      fetch('assets/nin.obj')
+        .then(response => response.text())
+        .then(data => {
+          this.ninData = data;
+          this.start();
+        });
+      fetch('assets/rook.obj')
+        .then(response => response.text())
+        .then(data => {
+          this.rookData = data;
+          this.start();
+        });
+      fetch('assets/cube.obj')
+        .then(response => response.text())
+        .then(data => {
+          this.cubeData = data;
+          this.start();
+        });
     }
   }
 
@@ -147,14 +164,7 @@ export class AppComponent {
     }
 
     if (this.entityType == Constants.VERTEX) {
-      if (this.modelChoice == ModelChoice.HardCodedCube) {
-        // These hard coded vertices are defined with some redundancy, so
-        // using a different way to get point count;
-        gl.drawArrays(gl.POINTS, 0, CubeHardCoded.vertices.length / 3);
-      }
-      else {
-        gl.drawArrays(gl.POINTS, 0, pointCount);
-      }
+      gl.drawArrays(gl.POINTS, 0, pointCount);
     }
     else {
 
@@ -260,24 +270,22 @@ export class AppComponent {
       return -1;
     }
 
-    const useObj = true;
-
     let vertices: Float32Array ;
     let normals: Float32Array;
     let indices: Uint16Array;
 
     if (this.modelChoice == ModelChoice.NineInchNails) {
-      const parsedObj: OBJDoc = new OBJDoc('');
-      parsedObj.parse(NinObj.data, 10, true);
+      const parsedObj: OBJDoc = new OBJDoc('nin.obj');
+      parsedObj.parse(this.ninData, 10, true);
       const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
       vertices = drawingInfo.vertices;
       normals = drawingInfo.normals;
       indices = drawingInfo.indices;
       this.rotateX = 0;
     } else if (this.modelChoice == ModelChoice.ChessRook)  {
-      const parsedObj: OBJDoc = new OBJDoc('');
+      const parsedObj: OBJDoc = new OBJDoc('rook.obj');
       this.rotateX = 90;
-      parsedObj.parse(RookObj.data, 2, false);
+      parsedObj.parse(this.rookData, 2, false);
       const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
       vertices = drawingInfo.vertices;
       normals = drawingInfo.normals;
@@ -285,9 +293,12 @@ export class AppComponent {
     }
     else {
       this.rotateX = 0;
-      vertices = CubeHardCoded.vertices;
-      normals = CubeHardCoded.normals;
-      indices = CubeHardCoded.indices;
+      const parsedObj: OBJDoc = new OBJDoc('cube.obj');
+      parsedObj.parse(this.cubeData, 2, false);
+      const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
+      vertices = drawingInfo.vertices;
+      normals = drawingInfo.normals;
+      indices = drawingInfo.indices;
     }
 
     if (!GlUtil.initArrayBuffer(gl, 'a_Position', vertices, 3, gl.FLOAT)) return -1;
