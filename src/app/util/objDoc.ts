@@ -2,10 +2,10 @@
 // Adjusted for TypeScript
 // OBJViewer.js (c) 2012 matsuda and itami
 import { Vector3 } from './math';
+
 // ------------------------------------------------------------------------------
 // OBJParser
 // ------------------------------------------------------------------------------
-
 
 
 export function readOBJFile(fileName: string, gl: any, model: any, scale: number, reverse: boolean) {
@@ -85,7 +85,7 @@ export class OBJDoc {
     const lines: Array<string | null> = fileString.split('\n');  // Break up into lines and store them as array
     lines.push(null); // Append null
     let index = 0;    // Initialize index of line
-
+    console.log('Parse ' + this.fileName);
     let currentObject = null;
     let currentMaterialName = '';
 

@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
-import { Constants, ModelChoice } from './resources/constants';
-import { Defaults } from './resources/defaults';
-import { Matrix4 } from './util/math';
-import { GlUtil } from './util/glUtil';
-import { DrawingInfo, OBJDoc } from './util/objDoc';
+
 import fragmentShaderSrc from '../assets/shaders/fragment-shader.glsl';
 import vertexShaderSrc from '../assets/shaders/vertex-shader.glsl';
-
+import { Constants, ModelChoice } from './resources/constants';
+import { Defaults } from './resources/defaults';
+import { GlUtil } from './util/glUtil';
+import { Matrix4 } from './util/math';
+import { DrawingInfo, OBJDoc } from './util/objDoc';
 
 let globalApp: AppComponent;
 
@@ -60,22 +60,33 @@ export class AppComponent {
   public spinning = true;
   public logging = false;
 
-  private ninData = '';
-  private rookData = '';
-  private cubeData = '';
+  private ninVertices: Float32Array = new Float32Array([]);
+  private ninNormals: Float32Array = new Float32Array([]);
+  private ninIndices: Uint16Array = new Uint16Array([]);
+
+  private rookVertices: Float32Array = new Float32Array([]);
+  private rookNormals: Float32Array = new Float32Array([]);
+  private rookIndices: Uint16Array = new Uint16Array([]);
+
+  private cubeVertices: Float32Array = new Float32Array([]);
+  private cubeNormals: Float32Array = new Float32Array([]);
+  private cubeIndicies: Uint16Array = new Uint16Array([]);
 
   public setCubeModel() {
     this.modelChoice = ModelChoice.Cube;
+    this.rotateX = 0;
     this.start();
   }
 
   public setRookModel() {
     this.modelChoice = ModelChoice.ChessRook;
+    this.rotateX = 90;
     this.start();
   }
 
   public setNinModel() {
     this.modelChoice = ModelChoice.NineInchNails;
+    this.rotateX = 0;
     this.start();
   }
 
@@ -88,6 +99,7 @@ export class AppComponent {
     this.spinning = !this.spinning;
     this.spin();
   }
+
   public spin() {
     if (this.spinning) {
       requestAnimationFrame(function () {
@@ -125,29 +137,44 @@ export class AppComponent {
   }
   public initScreen() {
     if (!this.init) {
+      this.init = true;
       fetch('assets/nin.obj')
         .then(response => response.text())
         .then(data => {
-          this.ninData = data;
-          this.start();
-        });
-      fetch('assets/rook.obj')
-        .then(response => response.text())
-        .then(data => {
-          this.rookData = data;
-          this.start();
-        });
-      fetch('assets/cube.obj')
-        .then(response => response.text())
-        .then(data => {
-          this.cubeData = data;
-          this.start();
+          const parsedObj: OBJDoc = new OBJDoc('nin.obj');
+          parsedObj.parse(data, 10, true);
+          const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
+          this.ninVertices = drawingInfo.vertices;
+          this.ninNormals = drawingInfo.normals;
+          this.ninIndices = drawingInfo.indices;
+        }).then(() => {
+          fetch('assets/rook.obj')
+            .then(response => response.text())
+            .then(data => {
+              const parsedObj: OBJDoc = new OBJDoc('rook.obj');
+              parsedObj.parse(data, 1.5, true);
+              const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
+              this.rookVertices = drawingInfo.vertices;
+              this.rookNormals = drawingInfo.normals;
+              this.rookIndices = drawingInfo.indices;
+            });
+        }).then(() => {
+          fetch('assets/cube.obj')
+            .then(response => response.text())
+            .then(data => {
+              const parsedObj: OBJDoc = new OBJDoc('cube.obj');
+              parsedObj.parse(data, 1.5, true);
+              const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
+              this.cubeVertices = drawingInfo.vertices;
+              this.cubeNormals = drawingInfo.normals;
+              this.cubeIndicies = drawingInfo.indices;
+              this.start();
+            });
         });
     }
   }
 
   public start(): void {
-    this.init = true;
     const gl = this.getContext();
     if (!gl) {
       return;
@@ -272,36 +299,23 @@ export class AppComponent {
       console.log('No index buffer');
       return -1;
     }
-
-    let vertices: Float32Array ;
+    let vertices: Float32Array;
     let normals: Float32Array;
     let indices: Uint16Array;
 
     if (this.modelChoice == ModelChoice.NineInchNails) {
-      const parsedObj: OBJDoc = new OBJDoc('nin.obj');
-      parsedObj.parse(this.ninData, 10, true);
-      const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
-      vertices = drawingInfo.vertices;
-      normals = drawingInfo.normals;
-      indices = drawingInfo.indices;
-      this.rotateX = 0;
+      vertices = this.ninVertices;
+      normals = this.ninNormals;
+      indices = this.ninIndices;
     } else if (this.modelChoice == ModelChoice.ChessRook)  {
-      const parsedObj: OBJDoc = new OBJDoc('rook.obj');
-      this.rotateX = 90;
-      parsedObj.parse(this.rookData, 2, false);
-      const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
-      vertices = drawingInfo.vertices;
-      normals = drawingInfo.normals;
-      indices = drawingInfo.indices;
+      vertices = this.rookVertices;
+      normals = this.rookNormals;
+      indices = this.rookIndices;
     }
     else {
-      this.rotateX = 0;
-      const parsedObj: OBJDoc = new OBJDoc('cube.obj');
-      parsedObj.parse(this.cubeData, 2, false);
-      const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
-      vertices = drawingInfo.vertices;
-      normals = drawingInfo.normals;
-      indices = drawingInfo.indices;
+      vertices = this.cubeVertices;
+      normals = this.cubeNormals;
+      indices = this.cubeIndicies;
     }
 
     if (!GlUtil.initArrayBuffer(gl, 'a_Position', vertices, 3, gl.FLOAT)) return -1;
