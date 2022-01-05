@@ -6,8 +6,8 @@ export class Defaults {
   public static readonly directionalLightX: number = 0.2;
   public static readonly directionalLightY: number = 0.4;
   public static readonly directionalLightZ: number = 1.0;
-  public static readonly pointLightX: number = 2.0;
-  public static readonly pointLightY: number = 0.75;
+  public static readonly pointLightX: number = 1;
+  public static readonly pointLightY: number = 2;
   public static readonly pointLightZ: number = -3;
   public static readonly transX: number = 0.0;
   public static readonly transY: number = 0.0;

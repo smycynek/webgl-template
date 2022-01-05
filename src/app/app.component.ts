@@ -163,7 +163,7 @@ export class AppComponent {
             .then(response => response.text())
             .then(data => {
               const parsedObj: OBJDoc = new OBJDoc('cube.obj');
-              parsedObj.parse(data, 1.5, true);
+              parsedObj.parse(data, 2, true);
               const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
               this.cubeVertices = drawingInfo.vertices;
               this.cubeNormals = drawingInfo.normals;
