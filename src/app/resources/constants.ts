@@ -5,6 +5,7 @@ export enum ModelChoice {
   Cube = 1,
   NineInchNails = 2,
   ChessRook = 3,
+  UploadedFile = 4,
 }
 
 export class Constants {

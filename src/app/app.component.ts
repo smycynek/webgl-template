@@ -34,6 +34,9 @@ export class AppComponent {
   public rotateX: number = Defaults.rotateX;
   public rotateY: number = Defaults.rotateY;
   public rotateZ: number = Defaults.rotateZ;
+  public scaleX: number = Defaults.scaleX;
+  public scaleY: number = Defaults.scaleY;
+  public scaleZ: number = Defaults.scaleZ;
   public eyeX: number = Defaults.eyeX;
   public eyeY: number = Defaults.eyeY;
   public eyeZ: number = Defaults.eyeZ;
@@ -72,12 +75,31 @@ export class AppComponent {
   private cubeNormals: Float32Array = new Float32Array([]);
   private cubeIndicies: Uint16Array = new Uint16Array([]);
 
+  private uploadedFileVertices: Float32Array = new Float32Array([]);
+  private uploadedFileNormals: Float32Array = new Float32Array([]);
+  private uploadedFileIndicies: Uint16Array = new Uint16Array([]);
+
   public setCubeModel() {
     this.modelChoice = ModelChoice.Cube;
     this.rotateX = 0;
     this.start();
   }
 
+  public onFileSelected($event: any) {
+    const file: File = $event.target.files[0];
+    if (file) {
+      file.text().then(data => {
+        const parsedObj: OBJDoc = new OBJDoc(file.name);
+        parsedObj.parse(data, 1, true);
+        const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
+        this.uploadedFileVertices = drawingInfo.vertices;
+        this.uploadedFileNormals = drawingInfo.normals;
+        this.uploadedFileIndicies = drawingInfo.indices;
+        this.modelChoice = ModelChoice.UploadedFile;
+      });
+    }
+
+  }
   public setRookModel() {
     this.modelChoice = ModelChoice.ChessRook;
     this.rotateX = 90;
@@ -86,6 +108,12 @@ export class AppComponent {
 
   public setNinModel() {
     this.modelChoice = ModelChoice.NineInchNails;
+    this.rotateX = 0;
+    this.start();
+  }
+
+  public setUploadedModel() {
+    this.modelChoice = ModelChoice.UploadedFile;
     this.rotateX = 0;
     this.start();
   }
@@ -163,7 +191,7 @@ export class AppComponent {
             .then(response => response.text())
             .then(data => {
               const parsedObj: OBJDoc = new OBJDoc('cube.obj');
-              parsedObj.parse(data, 2, true);
+              parsedObj.parse(data, 1, true);
               const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
               this.cubeVertices = drawingInfo.vertices;
               this.cubeNormals = drawingInfo.normals;
@@ -292,6 +320,16 @@ export class AppComponent {
     return translationMatrix;
   }
 
+  private setupScale(): Matrix4 {
+    const scaleMatrix = new Matrix4();
+    scaleMatrix.setScale(
+      this.scaleX,
+      this.scaleY,
+      this.scaleZ
+    );
+    return scaleMatrix;
+  }
+
   private loadGLData(gl: any): number {
     const indexBuffer = gl.createBuffer();
 
@@ -312,15 +350,21 @@ export class AppComponent {
       normals = this.rookNormals;
       indices = this.rookIndices;
     }
-    else {
+    else if (this.modelChoice == ModelChoice.Cube) {
       vertices = this.cubeVertices;
       normals = this.cubeNormals;
       indices = this.cubeIndicies;
+    }
+    else {
+      vertices = this.uploadedFileVertices;
+      normals = this.uploadedFileNormals;
+      indices = this.uploadedFileIndicies;
     }
 
     if (!GlUtil.initArrayBuffer(gl, 'a_Position', vertices, 3, gl.FLOAT)) return -1;
     if (!GlUtil.initArrayBuffer(gl, 'a_Normal', normals, 3, gl.FLOAT)) return -1;
 
+    const scaleMatrix = this.setupScale();
     const translationMatrix = this.setupTranslation();
     const rotationMatrix = this.setupRotation();
     const viewMatrix = this.setupView();
@@ -336,6 +380,7 @@ export class AppComponent {
     const u_LightPosition = gl.getUniformLocation(gl.program, 'u_LightPosition');
     const u_TranslationMatrix = gl.getUniformLocation(gl.program, 'u_TranslationMatrix');
     const u_RotationMatrix = gl.getUniformLocation(gl.program, 'u_RotationMatrix');
+    const u_ScaleMatrix = gl.getUniformLocation(gl.program, 'u_ScaleMatrix');
     const u_ViewMatrix = gl.getUniformLocation(gl.program, 'u_ViewMatrix');
     const u_ProjMatrix = gl.getUniformLocation(gl.program, 'u_ProjMatrix');
 
@@ -359,6 +404,7 @@ export class AppComponent {
 
     gl.uniformMatrix4fv(u_RotationMatrix, false, rotationMatrix.elements);
     gl.uniformMatrix4fv(u_TranslationMatrix, false, translationMatrix.elements);
+    gl.uniformMatrix4fv(u_ScaleMatrix, false, scaleMatrix.elements);
     gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
     gl.uniformMatrix4fv(u_ProjMatrix, false, projMatrix.elements);
 

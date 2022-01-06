@@ -31,7 +31,7 @@ from  *WebGL Programming Guide*  and did a rough port to TypeScript to make them
 
 ## TODO
 1.  Phong shading and lighting
-2.  Ability to upload an obj other 3d format and auto-set an appropriate scale
+2.  Ability to upload other file types besides .obj and auto-set a reasonable scale.
 3.  Anything else that will be useful as a starter template.
 
 ## Live demo

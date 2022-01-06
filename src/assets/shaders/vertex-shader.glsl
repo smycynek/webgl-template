@@ -7,6 +7,7 @@ uniform bool u_UseDirectionalLight;
 attribute vec4 a_Position;
 uniform mat4 u_ViewMatrix;
 uniform mat4 u_ProjMatrix;
+uniform mat4 u_ScaleMatrix;
 uniform mat4 u_RotationMatrix;
 uniform mat4 u_TranslationMatrix;
 attribute float a_PointSize;   // Only used in point rendering
@@ -25,7 +26,7 @@ void main() {
   } else { // Note -- with the point light model, the normal is the same for both triangles of each face,
         // but the vertex position varies,
         // so you get some nice pseudo pixel-level shading, but not quite Phong-level
-    vec4 vertex_position = u_ViewMatrix * u_TranslationMatrix * u_RotationMatrix * a_Position;
+    vec4 vertex_position = u_ViewMatrix  * u_TranslationMatrix * u_RotationMatrix * a_Position;
     vec3 point_light_direction = normalize(u_LightPosition - vec3(vertex_position));
     light_direction = point_light_direction;
   }
@@ -33,6 +34,6 @@ void main() {
      // Calculate how much to scale the color down by (Lambert Cosine Rule)
   vec3 finalColor = u_LightColor * a_TriangleColor.rgb * brightnessScalar;
   v_Color = vec4(finalColor, a_TriangleColor.a);
-  gl_Position = u_ProjMatrix * u_ViewMatrix * u_TranslationMatrix * u_RotationMatrix * a_Position;  // Set the vertex coordinates of the point
+  gl_Position = u_ProjMatrix * u_ViewMatrix * u_TranslationMatrix * u_RotationMatrix * u_ScaleMatrix * a_Position;  // Set the vertex coordinates of the point
   gl_PointSize = a_PointSize;
 }

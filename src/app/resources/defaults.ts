@@ -15,6 +15,9 @@ export class Defaults {
   public static readonly rotateX: number = 0;
   public static readonly rotateY: number = 0;
   public static readonly rotateZ: number = 0;
+  public static readonly scaleX: number = 1;
+  public static readonly scaleY: number = 1;
+  public static readonly scaleZ: number = 1;
   public static readonly eyeX: number = 2.0;
   public static readonly eyeY: number = 2.0;
   public static readonly eyeZ: number = 4.0;
