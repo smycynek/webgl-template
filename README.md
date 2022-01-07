@@ -32,7 +32,7 @@ from  *WebGL Programming Guide*  and did a rough port to TypeScript to make them
 ## TODO
 1.  Phong shading and lighting
 2.  Colors, textures, and error handling
-3.  Ability to upload other file types besides .obj and auto-set a reasonable scale.
+3.  Ability to upload other file types besides .obj
 4.  Anything else that will be useful as a starter template.
 
 

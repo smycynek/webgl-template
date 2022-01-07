@@ -3,8 +3,7 @@
     {{title}}
   </h1>
   <div class="smallLabel"><a href="https://github.com/smycynek/webgl-template">
-      https://github.com/smycynek/webgl-template
-    </a></div>
+      https://github.com/smycynek/webgl-template</a> </div>
   <canvas width="350px" height="350px" (click)="toggleSpinMode()"
     style="padding-bottom: 0px; margin-bottom: 0px;border:1px solid #000000;" id="gl_canvas"></canvas>
   <div class="smallLabel">Tap image to toggle spin.</div>
@@ -28,59 +27,64 @@
         <span class="smallLabel">Custom</span>
       </div>
     </div>
-
     <div [hidden]="modelChoice != 4" class="row">
       <div class="col-3">
-        <span class="label">OBJ File</span>
+        <span class="label">OBJ File <a href="https://github.com/smycynek/webgl-template#tips">(Tips)</a></span>
       </div>
       <div class="col-3">
-        <input (change)="onFileSelected($event)" class="radioSpaced" type="file"  accept=".obj" name="rFile">
+        <input (change)="onFileSelected($event)" class="radioSpaced" type="file" accept=".obj" name="rFile">
       </div>
     </div>
-
-    <div class="row">
-      <div class="col-3">
-        <span class="label">Lighting</span>
-      </div>
-      <div class="col-3">
-        <input class="radioSpaced" type="radio" name="rlightingType" (click)="setDirectionalLightMode()" />
-        <span class="smallLabel">Direction</span>
-      </div>
-      <div class="col-3">
-        <input checked class="radioSpaced" type="radio" name="rlightingType" (click)="setPointLightMode()" />
-        <span class="smallLabel">Point</span>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-3">
-        <span class="label">Entity</span>
-      </div>
-      <div class="col-3">
-        <input class="radioSpaced" type="radio" name="rentityType" (click)="setPointMode()" />
-        <span class="smallLabel">Vertex</span>
-      </div>
-      <div class="col-3">
-        <input class="radioSpaced" checked type="radio" name="rentityType" (click)="setTriangleMode()" />
-        <span class="smallLabel">Triangle</span>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-3">
-        <span class="label">Projection</span>
-      </div>
-      <div class="col-3">
-        <input class="radioSpaced" type="radio" name="rprojectionType" (click)="setOrthoMode()" /><span
-          class="smallLabel">Ortho</span>
-      </div>
-      <div class="col-4">
-        <input class="radioSpaced" checked type="radio" name="rprojectionType" (click)="setPerspectiveMode()" /><span
-          class="smallLabel">Perspective</span>
-      </div>
-    </div>
-
   </div>
 
+  <details>
+    <summary>Basics</summary>
+    <div style="text-align:left;margin:0.25em;padding:0.25em" class="container">
+
+
+      <div class="row">
+        <div class="col-3">
+          <span class="label">Lighting</span>
+        </div>
+        <div class="col-3">
+          <input class="radioSpaced" type="radio" name="rlightingType" (click)="setDirectionalLightMode()" />
+          <span class="smallLabel">Direction</span>
+        </div>
+        <div class="col-3">
+          <input checked class="radioSpaced" type="radio" name="rlightingType" (click)="setPointLightMode()" />
+          <span class="smallLabel">Point</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-3">
+          <span class="label">Entity</span>
+        </div>
+        <div class="col-3">
+          <input class="radioSpaced" type="radio" name="rentityType" (click)="setPointMode()" />
+          <span class="smallLabel">Vertex</span>
+        </div>
+        <div class="col-3">
+          <input class="radioSpaced" checked type="radio" name="rentityType" (click)="setTriangleMode()" />
+          <span class="smallLabel">Triangle</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-3">
+          <span class="label">Projection</span>
+        </div>
+        <div class="col-3">
+          <input class="radioSpaced" type="radio" name="rprojectionType" (click)="setOrthoMode()" /><span
+            class="smallLabel">Ortho</span>
+        </div>
+        <div class="col-4">
+          <input class="radioSpaced" checked type="radio" name="rprojectionType" (click)="setPerspectiveMode()" /><span
+            class="smallLabel">Perspective</span>
+        </div>
+      </div>
+
+    </div>
+  </details>
   <details>
     <summary>Transform</summary>
     <div style="text-align:left;margin:0.25em;padding:0.25em" class="container">
