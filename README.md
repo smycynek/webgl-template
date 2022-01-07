@@ -31,8 +31,17 @@ from  *WebGL Programming Guide*  and did a rough port to TypeScript to make them
 
 ## TODO
 1.  Phong shading and lighting
-2.  Ability to upload other file types besides .obj and auto-set a reasonable scale.
-3.  Anything else that will be useful as a starter template.
+2.  Colors, textures, and error handling
+3.  Ability to upload other file types besides .obj and auto-set a reasonable scale.
+4.  Anything else that will be useful as a starter template.
+
+
+## Tips
+Default lighting, scale, and position for custom uploaded models are just best guesses, and the parser
+may occasionally fail -- I can't fully support the obj spec with a 3rd-party parser in my spare time :)
+Try using directional lighting and changing scale and transform if you can't see
+your model.  Try https://stevenvictor.net/glta/assets/box_hole.obj for a sample model to upload, or create
+a simple one in Blender or Onshape.  Colors and textures are currently not supported.
 
 ## Live demo
 https://stevenvictor.net/glta
