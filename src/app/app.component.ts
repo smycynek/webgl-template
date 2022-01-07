@@ -78,10 +78,14 @@ export class AppComponent {
   private uploadedFileVertices: Float32Array = new Float32Array([]);
   private uploadedFileNormals: Float32Array = new Float32Array([]);
   private uploadedFileIndicies: Uint16Array = new Uint16Array([]);
+  private uploadedFileScale = 1.0;
 
   public setCubeModel() {
     this.modelChoice = ModelChoice.Cube;
     this.rotateX = 0;
+    this.scaleX = 1;
+    this.scaleY = 1;
+    this.scaleZ = 1;
     this.start();
   }
 
@@ -96,6 +100,10 @@ export class AppComponent {
         this.uploadedFileNormals = drawingInfo.normals;
         this.uploadedFileIndicies = drawingInfo.indices;
         this.modelChoice = ModelChoice.UploadedFile;
+        this.uploadedFileScale = this.getRecommendedScale(drawingInfo.vertices);
+        this.scaleX = this.uploadedFileScale;
+        this.scaleY = this.uploadedFileScale;
+        this.scaleZ = this.uploadedFileScale;
       });
     }
 
@@ -103,18 +111,27 @@ export class AppComponent {
   public setRookModel() {
     this.modelChoice = ModelChoice.ChessRook;
     this.rotateX = 90;
+    this.scaleX = 1.5;
+    this.scaleY = 1.5;
+    this.scaleZ = 1.5;
     this.start();
   }
 
   public setNinModel() {
     this.modelChoice = ModelChoice.NineInchNails;
     this.rotateX = 0;
+    this.scaleX = 10;
+    this.scaleY = 10;
+    this.scaleZ = 10;
     this.start();
   }
 
   public setUploadedModel() {
     this.modelChoice = ModelChoice.UploadedFile;
     this.rotateX = 0;
+    this.scaleX = this.uploadedFileScale;
+    this.scaleY = this.uploadedFileScale;
+    this.scaleZ = this.uploadedFileScale;
     this.start();
   }
 
@@ -170,7 +187,7 @@ export class AppComponent {
         .then(response => response.text())
         .then(data => {
           const parsedObj: OBJDoc = new OBJDoc('nin.obj');
-          parsedObj.parse(data, 10, true);
+          parsedObj.parse(data, 1, true);
           const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
           this.ninVertices = drawingInfo.vertices;
           this.ninNormals = drawingInfo.normals;
@@ -180,7 +197,7 @@ export class AppComponent {
             .then(response => response.text())
             .then(data => {
               const parsedObj: OBJDoc = new OBJDoc('rook.obj');
-              parsedObj.parse(data, 1.5, true);
+              parsedObj.parse(data, 1, true);
               const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
               this.rookVertices = drawingInfo.vertices;
               this.rookNormals = drawingInfo.normals;
@@ -330,6 +347,52 @@ export class AppComponent {
     return scaleMatrix;
   }
 
+  private getRecommendedScale(vertices: Float32Array): number {
+    let xMin = 0;
+    let xMax = 0;
+    let yMin = 0;
+    let yMax = 0;
+    let zMin = 0;
+    let zMax = 0;
+
+    for (let idx = 0; idx < vertices.length; idx += 3) {
+      const x = vertices[idx];
+      const y = vertices[idx + 1];
+      const z = vertices[idx + 2];
+
+      if (x > xMax) {
+        xMax = x;
+      } else if (x < xMin) {
+        xMin = x;
+      }
+
+      if (y > yMax) {
+        yMax = y;
+      } else if (y < yMin) {
+        yMin = y;
+      }
+
+      if (z > zMax) {
+        zMax = z;
+      } else if (z < zMin) {
+        zMin = z;
+      }
+
+    }
+    const boundX = Math.abs(xMax - xMin);
+    const boundY = Math.abs(yMax - yMin);
+    const boundZ = Math.abs(zMax - zMin);
+
+    const scaleX = 1 / boundX;
+    const scaleY = 1 / boundY;
+    const scaleZ = 1 / boundZ;
+
+    console.log(`scale:  ${scaleX}, ${scaleY}, ${scaleZ} `);
+    if (scaleX > scaleY) {
+      return scaleX;
+    }
+    return scaleY;
+  }
   private loadGLData(gl: any): number {
     const indexBuffer = gl.createBuffer();
 
@@ -360,6 +423,7 @@ export class AppComponent {
       normals = this.uploadedFileNormals;
       indices = this.uploadedFileIndicies;
     }
+
 
     if (!GlUtil.initArrayBuffer(gl, 'a_Position', vertices, 3, gl.FLOAT)) return -1;
     if (!GlUtil.initArrayBuffer(gl, 'a_Normal', normals, 3, gl.FLOAT)) return -1;
