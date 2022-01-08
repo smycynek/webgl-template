@@ -3,10 +3,11 @@ import fragmentShaderSrc from '../assets/shaders/fragment-shader.glsl';
 import vertexShaderSrc from '../assets/shaders/vertex-shader.glsl';
 import { Constants, ModelChoice } from './resources/constants';
 import { Defaults } from './resources/defaults';
-import { GlUtil } from './util/glUtil';
-import { Matrix4 } from './util/math';
-import { DrawingInfo, OBJDoc } from './util/objDoc';
+import { GlUtil } from './lib/glUtil';
+import { Matrix4 } from './lib/math';
+import { DrawingInfo, OBJDoc } from './lib/objDoc';
 import { Model, Ortho, Triple, tripleUniform } from './util/containers';
+import { getRecommendedScale } from './util/scale';
 let globalApp: AppComponent;
 
 @Component({
@@ -59,7 +60,7 @@ export class AppComponent {
         const parsedObj: OBJDoc = new OBJDoc(file.name);
         parsedObj.parse(data, 1, true);
         const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
-        const uploaded = new Model(drawingInfo.vertices, drawingInfo.normals, drawingInfo.indices, this.getRecommendedScale(drawingInfo.vertices));
+        const uploaded = new Model(drawingInfo.vertices, drawingInfo.normals, drawingInfo.indices, getRecommendedScale(drawingInfo.vertices));
         this.models.set(ModelChoice.UploadedFile, uploaded);
         this.modelChoice = ModelChoice.UploadedFile;
         this.scale = tripleUniform(uploaded.scale);
@@ -201,7 +202,7 @@ export class AppComponent {
     GlUtil.initShaders(gl, vertexShaderSrc, fragmentShaderSrc);
 
     const pointCount = this.loadGLData(gl);
-    if (pointCount === 0) {
+    if (pointCount <= 0) {
       return;
     }
     if (this.logging) {
@@ -315,41 +316,6 @@ export class AppComponent {
     return scaleMatrix;
   }
 
-  private getRecommendedScale(vertices: Float32Array): number {
-    let xMin = 0;
-    let xMax = 0;
-    let yMin = 0;
-    let yMax = 0;
-
-    for (let idx = 0; idx < vertices.length; idx += 3) {
-      const x = vertices[idx];
-      const y = vertices[idx + 1];
-
-      if (x > xMax) {
-        xMax = x;
-      } else if (x < xMin) {
-        xMin = x;
-      }
-
-      if (y > yMax) {
-        yMax = y;
-      } else if (y < yMin) {
-        yMin = y;
-      }
-
-    }
-    const boundX = Math.abs(xMax - xMin);
-    const boundY = Math.abs(yMax - yMin);
-    const scaleX = 1 / boundX;
-    const scaleY = 1 / boundY;
-
-    let scale = scaleY;
-    if (scaleX > scaleY) {
-      scale = scaleX;
-    }
-    console.log(`Scale: ${scale}`);
-    return scale;
-  }
 
   private loadGLData(gl: any): number {
     const indexBuffer = gl.createBuffer();
@@ -373,12 +339,6 @@ export class AppComponent {
 
     if (!GlUtil.initArrayBuffer(gl, 'a_Position', vertices, 3, gl.FLOAT)) return -1;
     if (!GlUtil.initArrayBuffer(gl, 'a_Normal', normals, 3, gl.FLOAT)) return -1;
-
-    const scaleMatrix = this.setupScale();
-    const translationMatrix = this.setupTranslation();
-    const rotationMatrix = this.setupRotation();
-    const viewMatrix = this.setupView();
-    const projMatrix = this.setupProjection();
 
     const a_PointSize = gl.getAttribLocation(gl.program, 'a_PointSize');
     const a_TriangleColor = gl.getAttribLocation(gl.program, 'a_TriangleColor');
@@ -412,11 +372,11 @@ export class AppComponent {
     gl.uniform3f(u_LightDirection, this.directionalLight.x, this.directionalLight.y, this.directionalLight.z);
     gl.uniform3f(u_LightPosition, this.pointLight.x, this.pointLight.y, this.pointLight.z);
 
-    gl.uniformMatrix4fv(u_RotationMatrix, false, rotationMatrix.elements);
-    gl.uniformMatrix4fv(u_TranslationMatrix, false, translationMatrix.elements);
-    gl.uniformMatrix4fv(u_ScaleMatrix, false, scaleMatrix.elements);
-    gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
-    gl.uniformMatrix4fv(u_ProjMatrix, false, projMatrix.elements);
+    gl.uniformMatrix4fv(u_RotationMatrix, false, this.setupRotation().elements);
+    gl.uniformMatrix4fv(u_TranslationMatrix, false, this.setupTranslation().elements);
+    gl.uniformMatrix4fv(u_ScaleMatrix, false, this.setupScale().elements);
+    gl.uniformMatrix4fv(u_ViewMatrix, false, this.setupView().elements);
+    gl.uniformMatrix4fv(u_ProjMatrix, false, this.setupProjection().elements);
 
     gl.vertexAttrib1f(a_PointSize, Constants.pointSize);
     gl.vertexAttrib4fv(a_TriangleColor, Constants.triangleColor.elements);

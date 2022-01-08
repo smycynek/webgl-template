@@ -1,4 +1,4 @@
-import { Vector3, Vector4 } from '../util/math';
+import { Vector3, Vector4 } from '../lib/math';
 
 
 export enum ModelChoice {

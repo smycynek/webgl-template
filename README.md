@@ -19,7 +19,7 @@ I made the NIN, rook, and cube models in https://cad.onshape.com
 
 Finally, I took some of the WebGL library code for math and loading shaders, buffers, and obj files
 from  *WebGL Programming Guide*  and did a rough port to TypeScript to make them a little nicer to work with in VS Code and Angular.
-(See the `util` directory for attribution.)
+(See the `lib` directory for attribution.)
 
 
 ## Usage
