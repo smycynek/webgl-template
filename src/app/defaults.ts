@@ -1,5 +1,5 @@
-import { Ortho, Perspective, Triple, tripleUniform } from '../util/containers';
 import { Constants, ModelChoice } from './constants';
+import { Ortho, Perspective, Triple, tripleUniform } from './util/containers';
 
 export class Defaults {
   public static readonly modelChoice = ModelChoice.Cube;

@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
+
 import fragmentShaderSrc from '../assets/shaders/fragment-shader.glsl';
 import vertexShaderSrc from '../assets/shaders/vertex-shader.glsl';
-import { Constants, ModelChoice } from './resources/constants';
-import { Defaults } from './resources/defaults';
+import { Constants, ModelChoice } from './constants';
+import { Defaults } from './defaults';
 import { GlUtil } from './lib/glUtil';
 import { Matrix4 } from './lib/math';
 import { DrawingInfo, OBJDoc } from './lib/objDoc';
 import { Model, Ortho, Triple, tripleUniform } from './util/containers';
 import { getRecommendedScale } from './util/scale';
+
 let globalApp: AppComponent;
 
 @Component({

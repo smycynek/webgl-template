@@ -7,19 +7,16 @@ export function getRecommendedScale(vertices: Float32Array): number {
   for (let idx = 0; idx < vertices.length; idx += 3) {
     const x = vertices[idx];
     const y = vertices[idx + 1];
-
     if (x > xMax) {
       xMax = x;
     } else if (x < xMin) {
       xMin = x;
     }
-
     if (y > yMax) {
       yMax = y;
     } else if (y < yMin) {
       yMin = y;
     }
-
   }
   const boundX = Math.abs(xMax - xMin);
   const boundY = Math.abs(yMax - yMin);

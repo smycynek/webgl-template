@@ -1,5 +1,4 @@
-import { Vector3, Vector4 } from '../lib/math';
-
+import { Vector3, Vector4 } from './lib/math';
 
 export enum ModelChoice {
   Cube = 1,
