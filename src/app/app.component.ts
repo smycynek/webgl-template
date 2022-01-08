@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 import fragmentShaderSrc from '../assets/shaders/fragment-shader.glsl';
 import vertexShaderSrc from '../assets/shaders/vertex-shader.glsl';
 import { Constants, ModelChoice } from './resources/constants';
@@ -7,7 +6,7 @@ import { Defaults } from './resources/defaults';
 import { GlUtil } from './util/glUtil';
 import { Matrix4 } from './util/math';
 import { DrawingInfo, OBJDoc } from './util/objDoc';
-
+import { Model, Ortho, Triple, tripleUniform } from './util/containers';
 let globalApp: AppComponent;
 
 @Component({
@@ -20,75 +19,39 @@ export class AppComponent {
     globalApp = this;
     this.spin();
   }
-  public modelChoice: ModelChoice = Defaults.modelChoice;
+  // startup, spin control
   public init = false;
-  public directionalLightX: number = Defaults.directionalLightX;
-  public directionalLightY: number = Defaults.directionalLightY;
-  public directionalLightZ: number = Defaults.directionalLightZ;
-  public pointLightX: number = Defaults.pointLightX;
-  public pointLightY: number = Defaults.pointLightY;
-  public pointLightZ: number = Defaults.pointLightZ;
-  public transX: number = Defaults.transX;
-  public transY: number = Defaults.transY;
-  public transZ: number = Defaults.transZ;
-  public rotateX: number = Defaults.rotateX;
-  public rotateY: number = Defaults.rotateY;
-  public rotateZ: number = Defaults.rotateZ;
-  public scaleX: number = Defaults.scaleX;
-  public scaleY: number = Defaults.scaleY;
-  public scaleZ: number = Defaults.scaleZ;
-  public eyeX: number = Defaults.eyeX;
-  public eyeY: number = Defaults.eyeY;
-  public eyeZ: number = Defaults.eyeZ;
-  public upX: number = Defaults.upX;
-  public upY: number = Defaults.upY;
-  public upZ: number = Defaults.upZ;
-  public lookX: number = Defaults.lookX;
-  public lookY: number = Defaults.lookY;
-  public lookZ: number = Defaults.lookZ;
-  public lightingType: string = Defaults.lightingType;
-  public entityType: string = Defaults.entityType;
-  public orthoLeft: number = Defaults.orthoLeft;
-  public orthoRight: number = Defaults.orthoRight;
-  public orthoBottom: number = Defaults.orthoBottom;
-  public orthoTop: number = Defaults.orthoTop;
-  public orthoNear: number = Defaults.orthoNear;
-  public orthoFar: number = Defaults.orthoFar;
-  public perspectiveFieldOfView: number = Defaults.perspectiveFieldOfView;
-  public perspectiveAspectRatio: number = Defaults.perspectiveAspectRatio;
-  public perspectiveNear: number = Defaults.perspectiveNear;
-  public perspectiveFar: number = Defaults.perspectiveFar;
-  public projectionType: string = Defaults.projectionType;
-  public title = 'WebGL Angular/TypeScript/Webpack Template';
   public spinning = true;
   public logging = false;
 
-  private ninVertices: Float32Array = new Float32Array([]);
-  private ninNormals: Float32Array = new Float32Array([]);
-  private ninIndices: Uint16Array = new Uint16Array([]);
+  // Vertex data from stock obj files and uploaded files
+  private models: Map<ModelChoice, Model> = new Map<ModelChoice, Model>();
 
-  private rookVertices: Float32Array = new Float32Array([]);
-  private rookNormals: Float32Array = new Float32Array([]);
-  private rookIndices: Uint16Array = new Uint16Array([]);
+  // Basic choices/toggles
+  public modelChoice: ModelChoice = Defaults.modelChoice;
+  public lightingType: string = Defaults.lightingType;
+  public entityType: string = Defaults.entityType;
+  public projectionType = Defaults.projectionType;
 
-  private cubeVertices: Float32Array = new Float32Array([]);
-  private cubeNormals: Float32Array = new Float32Array([]);
-  private cubeIndicies: Uint16Array = new Uint16Array([]);
+  // Basic transforms
+  public translate: Triple = Defaults.translation;
+  public rotation: Triple = Defaults.rotation;
+  public scale: Triple = Defaults.scale;
 
-  private uploadedFileVertices: Float32Array = new Float32Array([]);
-  private uploadedFileNormals: Float32Array = new Float32Array([]);
-  private uploadedFileIndicies: Uint16Array = new Uint16Array([]);
-  private uploadedFileScale = 1.0;
+  // View control
+  public eye: Triple = Defaults.eye;
+  public up: Triple = Defaults.up;
+  public look: Triple = Defaults.look;
 
-  public setCubeModel() {
-    this.modelChoice = ModelChoice.Cube;
-    this.rotateX = 0;
-    this.scaleX = 1;
-    this.scaleY = 1;
-    this.scaleZ = 1;
-    this.start();
-  }
+  // Lighting positions
+  public directionalLight: Triple = Defaults.directionalLight;
+  public pointLight: Triple = Defaults.pointLight;
 
+  // Projection parameters
+  public ortho: Ortho = Defaults.ortho;
+  public perspective = Defaults.perspective;
+
+  // Handler for uploading model files
   public onFileSelected($event: any) {
     const file: File = $event.target.files[0];
     if (file) {
@@ -96,45 +59,47 @@ export class AppComponent {
         const parsedObj: OBJDoc = new OBJDoc(file.name);
         parsedObj.parse(data, 1, true);
         const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
-        this.uploadedFileVertices = drawingInfo.vertices;
-        this.uploadedFileNormals = drawingInfo.normals;
-        this.uploadedFileIndicies = drawingInfo.indices;
+        const uploaded = new Model(drawingInfo.vertices, drawingInfo.normals, drawingInfo.indices, this.getRecommendedScale(drawingInfo.vertices));
+        this.models.set(ModelChoice.UploadedFile, uploaded);
         this.modelChoice = ModelChoice.UploadedFile;
-        this.uploadedFileScale = this.getRecommendedScale(drawingInfo.vertices);
-        this.scaleX = this.uploadedFileScale;
-        this.scaleY = this.uploadedFileScale;
-        this.scaleZ = this.uploadedFileScale;
+        this.scale = tripleUniform(uploaded.scale);
+        this.start();
       });
     }
-
   }
+
+  // Methods for setting the active model
+  public setCubeModel() {
+    this.modelChoice = ModelChoice.Cube;
+    this.rotation.x = 0;
+    this.scale = tripleUniform(1);
+    this.start();
+  }
+
   public setRookModel() {
     this.modelChoice = ModelChoice.ChessRook;
-    this.rotateX = 90;
-    this.scaleX = 1.5;
-    this.scaleY = 1.5;
-    this.scaleZ = 1.5;
+    this.rotation.x = 90;
+    this.scale = tripleUniform(1.5);
     this.start();
   }
 
   public setNinModel() {
     this.modelChoice = ModelChoice.NineInchNails;
-    this.rotateX = 0;
-    this.scaleX = 10;
-    this.scaleY = 10;
-    this.scaleZ = 10;
+    this.rotation.x = 0;
+    this.scale = tripleUniform(10);
     this.start();
   }
 
   public setUploadedModel() {
     this.modelChoice = ModelChoice.UploadedFile;
-    this.rotateX = 0;
-    this.scaleX = this.uploadedFileScale;
-    this.scaleY = this.uploadedFileScale;
-    this.scaleZ = this.uploadedFileScale;
-    this.start();
+    this.rotation.x = 0;
+    const model = this.models.get(ModelChoice.UploadedFile);
+    if (model) {
+      this.scale = tripleUniform(model.scale);
+    }
   }
 
+  // Methods for other basic controls
   public setPointLightMode() {
     this.lightingType = Constants.POINT_LIGHT;
     this.start();
@@ -145,12 +110,39 @@ export class AppComponent {
     this.spin();
   }
 
+  public setDirectionalLightMode() {
+    this.lightingType = Constants.DIRECTIONAL_LIGHT;
+    this.start();
+  }
+
+  public setPointMode() {
+    this.entityType = Constants.VERTEX;
+    this.start();
+  }
+
+  public setTriangleMode() {
+    this.entityType = Constants.TRIANGLE;
+    this.start();
+  }
+
+  public setOrthoMode() {
+    this.projectionType = Constants.ORTHO;
+    this.eye.z = 1;
+    this.start();
+  }
+
+  public setPerspectiveMode() {
+    this.projectionType = Constants.PERSPECTIVE;
+    this.eye.z = 4.0;
+    this.start();
+  }
+
   public spin() {
     if (this.spinning) {
       requestAnimationFrame(function () {
-        globalApp.rotateY += 1;
-        if (globalApp.rotateY == 360) {
-          globalApp.rotateY = 0;
+        globalApp.rotation.y += 1;
+        if (globalApp.rotation.y == 360) {
+          globalApp.rotation.y = 0;
         }
         globalApp.start();
         globalApp.spin();
@@ -158,28 +150,6 @@ export class AppComponent {
     }
   }
 
-  public setDirectionalLightMode() {
-    this.lightingType = Constants.DIRECTIONAL_LIGHT;
-    this.start();
-  }
-  public setPointMode() {
-    this.entityType = Constants.VERTEX;
-    this.start();
-  }
-  public setTriangleMode() {
-    this.entityType = Constants.TRIANGLE;
-    this.start();
-  }
-  public setOrthoMode() {
-    this.projectionType = Constants.ORTHO;
-    this.eyeZ = 1;
-    this.start();
-  }
-  public setPerspectiveMode() {
-    this.projectionType = Constants.PERSPECTIVE;
-    this.eyeZ = 4.0;
-    this.start();
-  }
   public initScreen() {
     if (!this.init) {
       this.init = true;
@@ -189,9 +159,8 @@ export class AppComponent {
           const parsedObj: OBJDoc = new OBJDoc('nin.obj');
           parsedObj.parse(data, 1, true);
           const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
-          this.ninVertices = drawingInfo.vertices;
-          this.ninNormals = drawingInfo.normals;
-          this.ninIndices = drawingInfo.indices;
+          const nin: Model = new Model(drawingInfo.vertices, drawingInfo.normals, drawingInfo.indices, 10);
+          this.models.set(ModelChoice.NineInchNails, nin);
         }).then(() => {
           fetch('assets/rook.obj')
             .then(response => response.text())
@@ -199,9 +168,8 @@ export class AppComponent {
               const parsedObj: OBJDoc = new OBJDoc('rook.obj');
               parsedObj.parse(data, 1, true);
               const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
-              this.rookVertices = drawingInfo.vertices;
-              this.rookNormals = drawingInfo.normals;
-              this.rookIndices = drawingInfo.indices;
+              const rook: Model = new Model(drawingInfo.vertices, drawingInfo.normals, drawingInfo.indices, 1.5);
+              this.models.set(ModelChoice.ChessRook, rook);
             });
         }).then(() => {
           fetch('assets/cube.obj')
@@ -210,9 +178,8 @@ export class AppComponent {
               const parsedObj: OBJDoc = new OBJDoc('cube.obj');
               parsedObj.parse(data, 1, true);
               const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
-              this.cubeVertices = drawingInfo.vertices;
-              this.cubeNormals = drawingInfo.normals;
-              this.cubeIndicies = drawingInfo.indices;
+              const cube: Model = new Model(drawingInfo.vertices, drawingInfo.normals, drawingInfo.indices, 1.5);
+              this.models.set(ModelChoice.Cube, cube);
               this.start();
             });
         });
@@ -234,6 +201,9 @@ export class AppComponent {
     GlUtil.initShaders(gl, vertexShaderSrc, fragmentShaderSrc);
 
     const pointCount = this.loadGLData(gl);
+    if (pointCount === 0) {
+      return;
+    }
     if (this.logging) {
       this.logState();
     }
@@ -283,20 +253,20 @@ export class AppComponent {
     const projMatrix = new Matrix4();
     if (this.projectionType == Constants.ORTHO) {
       projMatrix.setOrtho(
-        this.orthoLeft,
-        this.orthoRight,
-        this.orthoBottom,
-        this.orthoTop,
-        this.orthoNear,
-        this.orthoFar
+        this.ortho.left,
+        this.ortho.right,
+        this.ortho.bottom,
+        this.ortho.top,
+        this.ortho.near,
+        this.ortho.far,
       );
     }
     else {
       projMatrix.setPerspective(
-        this.perspectiveFieldOfView,
-        this.perspectiveAspectRatio,
-        this.perspectiveNear,
-        this.perspectiveFar,
+        this.perspective.fieldOfView,
+        this.perspective.aspectRatio,
+        this.perspective.near,
+        this.perspective.far,
       );
     }
     return projMatrix;
@@ -305,15 +275,15 @@ export class AppComponent {
   private setupView() {
     const viewMatrix: Matrix4 = new Matrix4();
     viewMatrix.setLookAt(
-      this.eyeX,
-      this.eyeY,
-      this.eyeZ,
-      this.lookX,
-      this.lookY,
-      this.lookZ,
-      this.upX,
-      this.upY,
-      this.upZ
+      this.eye.x,
+      this.eye.y,
+      this.eye.z,
+      this.look.x,
+      this.look.y,
+      this.look.z,
+      this.up.x,
+      this.up.y,
+      this.up.z
     );
     return viewMatrix;
 
@@ -321,18 +291,16 @@ export class AppComponent {
 
   private setupRotation(): Matrix4 {
     let rotationMatrix = new Matrix4();
-    rotationMatrix = rotationMatrix.rotate(this.rotateX, 1, 0, 0);
-    rotationMatrix = rotationMatrix.rotate(this.rotateY, 0, 1, 0);
-    rotationMatrix = rotationMatrix.rotate(this.rotateZ, 0, 0, 1);
+    rotationMatrix = rotationMatrix.rotate(this.rotation.x, 1, 0, 0);
+    rotationMatrix = rotationMatrix.rotate(this.rotation.y, 0, 1, 0);
+    rotationMatrix = rotationMatrix.rotate(this.rotation.z, 0, 0, 1);
     return rotationMatrix;
   }
 
   private setupTranslation(): Matrix4 {
     const translationMatrix = new Matrix4();
     translationMatrix.setTranslate(
-      this.transX,
-      this.transY,
-      this.transZ
+      this.translate.x, this.translate.y, this.translate.z
     );
     return translationMatrix;
   }
@@ -340,9 +308,9 @@ export class AppComponent {
   private setupScale(): Matrix4 {
     const scaleMatrix = new Matrix4();
     scaleMatrix.setScale(
-      this.scaleX,
-      this.scaleY,
-      this.scaleZ
+      this.scale.x,
+      this.scale.y,
+      this.scale.z
     );
     return scaleMatrix;
   }
@@ -352,13 +320,10 @@ export class AppComponent {
     let xMax = 0;
     let yMin = 0;
     let yMax = 0;
-    let zMin = 0;
-    let zMax = 0;
 
     for (let idx = 0; idx < vertices.length; idx += 3) {
       const x = vertices[idx];
       const y = vertices[idx + 1];
-      const z = vertices[idx + 2];
 
       if (x > xMax) {
         xMax = x;
@@ -372,27 +337,20 @@ export class AppComponent {
         yMin = y;
       }
 
-      if (z > zMax) {
-        zMax = z;
-      } else if (z < zMin) {
-        zMin = z;
-      }
-
     }
     const boundX = Math.abs(xMax - xMin);
     const boundY = Math.abs(yMax - yMin);
-    const boundZ = Math.abs(zMax - zMin);
-
     const scaleX = 1 / boundX;
     const scaleY = 1 / boundY;
-    const scaleZ = 1 / boundZ;
 
-    console.log(`scale:  ${scaleX}, ${scaleY}, ${scaleZ} `);
+    let scale = scaleY;
     if (scaleX > scaleY) {
-      return scaleX;
+      scale = scaleX;
     }
-    return scaleY;
+    console.log(`Scale: ${scale}`);
+    return scale;
   }
+
   private loadGLData(gl: any): number {
     const indexBuffer = gl.createBuffer();
 
@@ -404,26 +362,14 @@ export class AppComponent {
     let normals: Float32Array;
     let indices: Uint16Array;
 
-    if (this.modelChoice == ModelChoice.NineInchNails) {
-      vertices = this.ninVertices;
-      normals = this.ninNormals;
-      indices = this.ninIndices;
-    } else if (this.modelChoice == ModelChoice.ChessRook)  {
-      vertices = this.rookVertices;
-      normals = this.rookNormals;
-      indices = this.rookIndices;
+    const model = this.models.get(this.modelChoice);
+    if (model) {
+      vertices = model.vertices;
+      normals = model.normals;
+      indices = model.indices;
+    } else {
+      return 0; // model not loaded yet;
     }
-    else if (this.modelChoice == ModelChoice.Cube) {
-      vertices = this.cubeVertices;
-      normals = this.cubeNormals;
-      indices = this.cubeIndicies;
-    }
-    else {
-      vertices = this.uploadedFileVertices;
-      normals = this.uploadedFileNormals;
-      indices = this.uploadedFileIndicies;
-    }
-
 
     if (!GlUtil.initArrayBuffer(gl, 'a_Position', vertices, 3, gl.FLOAT)) return -1;
     if (!GlUtil.initArrayBuffer(gl, 'a_Normal', normals, 3, gl.FLOAT)) return -1;
@@ -463,8 +409,8 @@ export class AppComponent {
 
     gl.uniform4fv(u_PointColor, Constants.pointColor.elements);
     gl.uniform3fv(u_LightColor, Constants.lightColor.elements);
-    gl.uniform3f(u_LightDirection, this.directionalLightX, this.directionalLightY, this.directionalLightZ);
-    gl.uniform3f(u_LightPosition, this.pointLightX, this.pointLightY, this.pointLightZ);
+    gl.uniform3f(u_LightDirection, this.directionalLight.x, this.directionalLight.y, this.directionalLight.z);
+    gl.uniform3f(u_LightPosition, this.pointLight.x, this.pointLight.y, this.pointLight.z);
 
     gl.uniformMatrix4fv(u_RotationMatrix, false, rotationMatrix.elements);
     gl.uniformMatrix4fv(u_TranslationMatrix, false, translationMatrix.elements);
@@ -478,7 +424,7 @@ export class AppComponent {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 
-    return indices.length;
+    return indices ? indices.length : 0;
   }
 
   private logState(): void {

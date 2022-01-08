@@ -14,7 +14,7 @@ export class GlUtil {
     return true;
   }
 
-  public static initArrayBuffer(gl: any, attribute: string, data: any, num: number, type: any): boolean {
+  public static initArrayBuffer(gl: any, attribute: string, data: Float32Array, num: number, type: any): boolean {
   // Create a buffer object
     const buffer = gl.createBuffer();
     if (!buffer) {
