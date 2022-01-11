@@ -4,7 +4,7 @@ import { Ortho, Perspective, Triple, tripleUniform } from './util/containers';
 export class Defaults {
   public static readonly modelChoice = ModelChoice.Cube;
   public static readonly directionalLight: Triple = new Triple(0.2, 0.4, 1.0);
-  public static readonly pointLight: Triple = new Triple(1, 2, -3);
+  public static readonly pointLight: Triple = new Triple(1, 2, 3);
   public static readonly translation: Triple = tripleUniform(0);
   public static readonly rotation: Triple = tripleUniform(0);
   public static readonly scale: Triple = tripleUniform(1);

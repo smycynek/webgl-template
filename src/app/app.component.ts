@@ -350,9 +350,8 @@ export class AppComponent {
     const u_UseDirectionalLight = gl.getUniformLocation(gl.program, 'u_UseDirectionalLight');
     const u_LightDirection = gl.getUniformLocation(gl.program, 'u_LightDirection');
     const u_LightPosition = gl.getUniformLocation(gl.program, 'u_LightPosition');
-    const u_TranslationMatrix = gl.getUniformLocation(gl.program, 'u_TranslationMatrix');
-    const u_RotationMatrix = gl.getUniformLocation(gl.program, 'u_RotationMatrix');
-    const u_ScaleMatrix = gl.getUniformLocation(gl.program, 'u_ScaleMatrix');
+    const u_ModelMatrix = gl.getUniformLocation(gl.program, 'u_ModelMatrix');
+    const u_NormalMatrix = gl.getUniformLocation(gl.program, 'u_NormalMatrix');
     const u_ViewMatrix = gl.getUniformLocation(gl.program, 'u_ViewMatrix');
     const u_ProjMatrix = gl.getUniformLocation(gl.program, 'u_ProjMatrix');
 
@@ -373,11 +372,14 @@ export class AppComponent {
     gl.uniform3fv(u_LightColor, Constants.lightColor.elements);
     gl.uniform3f(u_LightDirection, this.directionalLight.x, this.directionalLight.y, this.directionalLight.z);
     gl.uniform3f(u_LightPosition, this.pointLight.x, this.pointLight.y, this.pointLight.z);
-
-    gl.uniformMatrix4fv(u_RotationMatrix, false, this.setupRotation().elements);
-    gl.uniformMatrix4fv(u_TranslationMatrix, false, this.setupTranslation().elements);
-    gl.uniformMatrix4fv(u_ScaleMatrix, false, this.setupScale().elements);
     gl.uniformMatrix4fv(u_ViewMatrix, false, this.setupView().elements);
+    const modelMatrix = this.setupTranslation().concat(this.setupRotation()).concat(this.setupScale());
+    const normalMatrix = new Matrix4();
+    normalMatrix.setInverseOf(modelMatrix);
+    normalMatrix.transpose();
+
+    gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+    gl.uniformMatrix4fv(u_NormalMatrix, false, normalMatrix.elements);
     gl.uniformMatrix4fv(u_ProjMatrix, false, this.setupProjection().elements);
 
     gl.vertexAttrib1f(a_PointSize, Constants.pointSize);
