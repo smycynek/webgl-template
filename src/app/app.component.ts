@@ -159,6 +159,12 @@ export class AppComponent {
     if (!this.init) {
       this.init = true;
       this.gl = this.getContext();
+
+      const canvas = this.getCanvas();
+      if (canvas && canvas instanceof HTMLCanvasElement) {
+        this.scaleCanvas(canvas);
+      }
+
       if (!this.gl) {
         throw Error('No WebGL context available.');
       }
@@ -234,9 +240,19 @@ export class AppComponent {
     return canvas;
   }
 
+  public onResize($event: any) {
+    const canvas = this.getCanvas();
+    if (canvas && canvas instanceof HTMLCanvasElement) {
+      this.scaleCanvas(canvas);
+    }
+  }
+
   private scaleCanvas(canvas: HTMLCanvasElement): void {
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
+    if (this.gl) {
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+      this.gl.viewport(0, 0, canvas.width, canvas.height);
+    }
   }
 
   private getContext(): any | null {
@@ -249,7 +265,6 @@ export class AppComponent {
       return null;
     }
     if (canvas instanceof HTMLCanvasElement) {
-      this.scaleCanvas(canvas);
       // Get the rendering context for WebGL
       gl = canvas.getContext('webgl');
       if (!gl) {

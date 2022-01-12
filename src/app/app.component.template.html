@@ -1,4 +1,4 @@
-<div style="text-align:left;margin:0.5em;" [attr.init]="initScreen()">
+<div (window:resize)="onResize($event)" style="text-align:left;margin:0.5em;" [attr.init]="initScreen()">
   <h1 class="banner">
     WebGL Angular/TypeScript/Webpack Template
   </h1>
