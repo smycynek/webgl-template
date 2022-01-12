@@ -17,7 +17,7 @@ export class Constants {
 
   public static readonly pointColor: Vector4 = new Vector4([1.0, 1.0, 0.0, 1.0]);
   public static readonly lightColor: Vector3 = new Vector3([1.0, 1.0, 1.0]);
-  public static readonly pointSize = 2.0;
+  public static readonly pointSize = 3.0;
   public static readonly triangleColor: Vector4 = new Vector4([1, 1, 1, 1]);
 
 

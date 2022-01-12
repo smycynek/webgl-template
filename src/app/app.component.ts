@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 
 import fragmentShaderSrc from '../assets/shaders/fragment-shader.glsl';
 import vertexShaderSrc from '../assets/shaders/vertex-shader.glsl';
+
 import { Constants, ModelChoice } from './constants';
 import { Defaults } from './defaults';
 import { GlUtil } from './lib/glUtil';
@@ -26,7 +27,8 @@ export class AppComponent {
   public init = false;
   public spinning = true;
   public logging = false;
-
+  private gl: any = null;
+  private shaderProgram: any = null;
   // Vertex data from stock obj files and uploaded files
   private models: Map<ModelChoice, Model> = new Map<ModelChoice, Model>();
 
@@ -156,6 +158,15 @@ export class AppComponent {
   public initScreen() {
     if (!this.init) {
       this.init = true;
+      this.gl = this.getContext();
+      if (!this.gl) {
+        throw Error('No WebGL context available.');
+      }
+      this.shaderProgram = GlUtil.createProgram(this.gl, vertexShaderSrc, fragmentShaderSrc);
+
+      this.gl.useProgram(this.shaderProgram);
+      this.gl.program = this.shaderProgram;
+
       fetch('assets/nin.obj')
         .then(response => response.text())
         .then(data => {
@@ -190,18 +201,13 @@ export class AppComponent {
   }
 
   public start(): void {
-    const gl = this.getContext();
-    if (!gl) {
-      return;
-    }
-
+    const gl = this.gl;
     gl.enable(gl.DEPTH_TEST);
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BIT);
     gl.enable(gl.CULL_FACE);
     gl.cullFace(gl.BACK);
 
-    GlUtil.initShaders(gl, vertexShaderSrc, fragmentShaderSrc);
 
     const pointCount = this.loadGLData(gl);
     if (pointCount <= 0) {
@@ -215,7 +221,6 @@ export class AppComponent {
       gl.drawArrays(gl.POINTS, 0, pointCount);
     }
     else {
-
       gl.drawElements(gl.TRIANGLES, pointCount, gl.UNSIGNED_SHORT, 0);
     }
   }
@@ -229,7 +234,7 @@ export class AppComponent {
     return canvas;
   }
 
-  private scaleCanvas(canvas : HTMLCanvasElement): void {
+  private scaleCanvas(canvas: HTMLCanvasElement): void {
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
   }

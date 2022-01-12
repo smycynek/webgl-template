@@ -52,7 +52,7 @@ export class GlUtil {
    * @param fshader a fragment shader program (string)
    * @return created program object, or null if the creation has failed
    */
-  private static createProgram(gl: any, vshader: string, fshader: string) : any | null {
+  public static createProgram(gl: any, vshader: string, fshader: string) : any | null {
     // Create shader object
     const vertexShader = GlUtil.loadShader(gl, gl.VERTEX_SHADER, vshader);
     const fragmentShader = GlUtil.loadShader(gl, gl.FRAGMENT_SHADER, fshader);
