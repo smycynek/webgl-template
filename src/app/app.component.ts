@@ -1,10 +1,7 @@
 import { Component } from '@angular/core';
 
-import trianglesFragmentShaderSrc from '../assets/shaders/trianglesFragmentShader.glsl';
-import trianglesVertexShaderSrc from '../assets/shaders/trianglesVertexShader.glsl';
-
-import pointsFragmentShaderSrc from '../assets/shaders/pointsFragmentShader.glsl';
-import pointsVertexShaderSrc from '../assets/shaders/pointsVertexShader.glsl';
+import fragmentShaderSrc from '../assets/shaders/fragment-shader.glsl';
+import vertexShaderSrc from '../assets/shaders/vertex-shader.glsl';
 
 import { Constants, ModelChoice } from './constants';
 import { Defaults } from './defaults';
@@ -31,8 +28,7 @@ export class AppComponent {
   public spinning = true;
   public logging = false;
   private gl: any = null;
-  private trianglesShaderProgram: any = null;
-  private pointsShaderProgram: any = null;
+  private shaderProgram: any = null;
   // Vertex data from stock obj files and uploaded files
   private models: Map<ModelChoice, Model> = new Map<ModelChoice, Model>();
 
@@ -126,21 +122,11 @@ export class AppComponent {
 
   public setPointMode() {
     this.entityType = Constants.VERTEX;
-    // const a_Position = this.gl.getAttribLocation(this.trianglesShaderProgram, 'a_Position');
-    // this.gl.disableVertexAttribArray(a_Position);
-    this.gl = this.getContext();
-    this.gl.useProgram(this.pointsShaderProgram);
-    this.gl.program = this.pointsShaderProgram;
     this.start();
   }
 
   public setTriangleMode() {
     this.entityType = Constants.TRIANGLE;
-    // const a_Position = this.gl.getAttribLocation(this.pointsShaderProgram, 'a_Position');
-    // this.gl.disableVertexAttribArray(a_Position);
-    this.gl = this.getContext();
-    this.gl.useProgram(this.trianglesShaderProgram);
-    this.gl.program = this.trianglesShaderProgram;
     this.start();
   }
 
@@ -183,11 +169,10 @@ export class AppComponent {
         this.scaleCanvas(canvas);
       }
 
-      this.trianglesShaderProgram = GlUtil.createProgram(this.gl, trianglesVertexShaderSrc, trianglesFragmentShaderSrc);
-      this.pointsShaderProgram = GlUtil.createProgram(this.gl, pointsVertexShaderSrc, pointsFragmentShaderSrc);
+      this.shaderProgram = GlUtil.createProgram(this.gl, vertexShaderSrc, fragmentShaderSrc);
 
-      this.gl.useProgram(this.trianglesShaderProgram);
-      this.gl.program = this.trianglesShaderProgram;
+      this.gl.useProgram(this.shaderProgram);
+      this.gl.program = this.shaderProgram;
 
       fetch('assets/nin.obj')
         .then(response => response.text())
@@ -383,38 +368,38 @@ export class AppComponent {
     }
 
     if (!GlUtil.initArrayBuffer(gl, 'a_Position', vertices, 3, gl.FLOAT)) return -1;
-    if (this.entityType == Constants.VERTEX) {
-      const a_PointSize = gl.getAttribLocation(gl.program, 'a_PointSize');
-      const u_PointColor1 = gl.getUniformLocation(gl.program, 'u_PointColor1');
-      const u_PointColor2 = gl.getUniformLocation(gl.program, 'u_PointColor2');
-      gl.uniform4fv(u_PointColor1, Constants.pointColor1.elements);
-      gl.uniform4fv(u_PointColor2, Constants.pointColor2.elements);
-      gl.vertexAttrib1f(a_PointSize, Constants.pointSize);
-    }
+    if (!GlUtil.initArrayBuffer(gl, 'a_Normal', normals, 3, gl.FLOAT)) return -1;
 
-    if (this.entityType == Constants.TRIANGLE) {
-      if (!GlUtil.initArrayBuffer(gl, 'a_Normal', normals, 3, gl.FLOAT)) return -1;
-      const a_TriangleColor = gl.getAttribLocation(gl.program, 'a_TriangleColor');
-      const u_LightColor = gl.getUniformLocation(gl.program, 'u_LightColor');
-      const u_UseDirectionalLight = gl.getUniformLocation(gl.program, 'u_UseDirectionalLight');
-      const u_LightDirection = gl.getUniformLocation(gl.program, 'u_LightDirection');
-      const u_LightPosition = gl.getUniformLocation(gl.program, 'u_LightPosition');
-      gl.vertexAttrib4fv(a_TriangleColor, Constants.triangleColor.elements);
-      if (this.lightingType == Constants.DIRECTIONAL_LIGHT) {
-        gl.uniform1i(u_UseDirectionalLight, true);
-      } else {
-        gl.uniform1i(u_UseDirectionalLight, false);
-      }
-      gl.uniform3fv(u_LightColor, Constants.lightColor.elements);
-      gl.uniform3f(u_LightDirection, this.directionalLight.x, this.directionalLight.y, this.directionalLight.z);
-      gl.uniform3f(u_LightPosition, this.pointLight.x, this.pointLight.y, this.pointLight.z);
-    }
-
+    const a_PointSize = gl.getAttribLocation(gl.program, 'a_PointSize');
+    const a_TriangleColor = gl.getAttribLocation(gl.program, 'a_TriangleColor');
+    const u_PointColor = gl.getUniformLocation(gl.program, 'u_PointColor');
+    const u_LightColor = gl.getUniformLocation(gl.program, 'u_LightColor');
+    const u_UseStaticColor = gl.getUniformLocation(gl.program, 'u_UseStaticColor');
+    const u_UseDirectionalLight = gl.getUniformLocation(gl.program, 'u_UseDirectionalLight');
+    const u_LightDirection = gl.getUniformLocation(gl.program, 'u_LightDirection');
+    const u_LightPosition = gl.getUniformLocation(gl.program, 'u_LightPosition');
     const u_ModelMatrix = gl.getUniformLocation(gl.program, 'u_ModelMatrix');
     const u_NormalMatrix = gl.getUniformLocation(gl.program, 'u_NormalMatrix');
     const u_ViewMatrix = gl.getUniformLocation(gl.program, 'u_ViewMatrix');
     const u_ProjMatrix = gl.getUniformLocation(gl.program, 'u_ProjMatrix');
 
+    if (this.entityType == Constants.VERTEX) {
+      gl.uniform1i(u_UseStaticColor, true); // If rendering points, render single color
+    }
+    else {
+      gl.uniform1i(u_UseStaticColor, false); // Otherwise, each fragment/face gets its own color
+    }
+
+    if (this.lightingType == Constants.DIRECTIONAL_LIGHT) {
+      gl.uniform1i(u_UseDirectionalLight, true);
+    } else {
+      gl.uniform1i(u_UseDirectionalLight, false);
+    }
+
+    gl.uniform4fv(u_PointColor, Constants.pointColor.elements);
+    gl.uniform3fv(u_LightColor, Constants.lightColor.elements);
+    gl.uniform3f(u_LightDirection, this.directionalLight.x, this.directionalLight.y, this.directionalLight.z);
+    gl.uniform3f(u_LightPosition, this.pointLight.x, this.pointLight.y, this.pointLight.z);
     gl.uniformMatrix4fv(u_ViewMatrix, false, this.setupView().elements);
     const modelMatrix = this.setupTranslation().concat(this.setupRotation()).concat(this.setupScale());
     const normalMatrix = new Matrix4();
@@ -424,6 +409,9 @@ export class AppComponent {
     gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
     gl.uniformMatrix4fv(u_NormalMatrix, false, normalMatrix.elements);
     gl.uniformMatrix4fv(u_ProjMatrix, false, this.setupProjection().elements);
+
+    gl.vertexAttrib1f(a_PointSize, Constants.pointSize);
+    gl.vertexAttrib4fv(a_TriangleColor, Constants.triangleColor.elements);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);

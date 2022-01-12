@@ -15,10 +15,9 @@ export class Constants {
   public static readonly POINT_LIGHT = 'POINT_LIGHT';
   public static readonly DIRECTIONAL_LIGHT = 'DIRECTIONAL_LIGHT';
 
-  public static readonly pointColor1: Vector4 = new Vector4([1.0, 0.0, 0.0, 1.0]);
-  public static readonly pointColor2: Vector4 = new Vector4([1.0, 1.0, 1.0, 1.0]);
+  public static readonly pointColor: Vector4 = new Vector4([1.0, 1.0, 0.0, 1.0]);
   public static readonly lightColor: Vector3 = new Vector3([1.0, 1.0, 1.0]);
-  public static readonly pointSize = 6.0;
+  public static readonly pointSize = 3.0;
   public static readonly triangleColor: Vector4 = new Vector4([1, 1, 1, 1]);
 
 
@@ -27,8 +26,7 @@ export class Constants {
 ---Static/Constant data------
 lightColor: ${Constants.lightColor.elements}
 pointSize: ${Constants.pointSize}
-pointColor: ${Constants.pointColor1.elements}
-pointColor: ${Constants.pointColor2.elements}
+pointColor: ${Constants.pointColor.elements}
 triangleColor: ${Constants.triangleColor.elements}
 `;
     return data;
