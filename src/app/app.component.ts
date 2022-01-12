@@ -229,15 +229,22 @@ export class AppComponent {
     return canvas;
   }
 
+  private scaleCanvas(canvas : HTMLCanvasElement): void {
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+  }
+
   private getContext(): any | null {
     let gl;
 
     const canvas = this.getCanvas();
+
     if (!canvas) {
       console.log('Failed to get canvas');
       return null;
     }
     if (canvas instanceof HTMLCanvasElement) {
+      this.scaleCanvas(canvas);
       // Get the rendering context for WebGL
       gl = canvas.getContext('webgl');
       if (!gl) {
