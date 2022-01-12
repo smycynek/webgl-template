@@ -77,14 +77,14 @@ export class AppComponent {
   public setCubeModel() {
     this.modelChoice = ModelChoice.Cube;
     this.rotation.x = 0;
-    this.scale = tripleUniform(1);
+    this.scale = tripleUniform(1.5);
     this.start();
   }
 
   public setRookModel() {
     this.modelChoice = ModelChoice.ChessRook;
-    this.rotation.x = 90;
-    this.scale = tripleUniform(1.5);
+    this.rotation.x = 0;
+    this.scale = tripleUniform(2);
     this.start();
   }
 
@@ -160,14 +160,15 @@ export class AppComponent {
       this.init = true;
       this.gl = this.getContext();
 
+      if (!this.gl) {
+        throw Error('No WebGL context available.');
+      }
+
       const canvas = this.getCanvas();
       if (canvas && canvas instanceof HTMLCanvasElement) {
         this.scaleCanvas(canvas);
       }
 
-      if (!this.gl) {
-        throw Error('No WebGL context available.');
-      }
       this.shaderProgram = GlUtil.createProgram(this.gl, vertexShaderSrc, fragmentShaderSrc);
 
       this.gl.useProgram(this.shaderProgram);
