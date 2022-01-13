@@ -372,7 +372,8 @@ export class AppComponent {
 
     const a_PointSize = gl.getAttribLocation(gl.program, 'a_PointSize');
     const a_TriangleColor = gl.getAttribLocation(gl.program, 'a_TriangleColor');
-    const u_PointColor = gl.getUniformLocation(gl.program, 'u_PointColor');
+    const u_PointColor1 = gl.getUniformLocation(gl.program, 'u_PointColor1');
+    const u_PointColor2 = gl.getUniformLocation(gl.program, 'u_PointColor2');
     const u_LightColor = gl.getUniformLocation(gl.program, 'u_LightColor');
     const u_UseStaticColor = gl.getUniformLocation(gl.program, 'u_UseStaticColor');
     const u_UseDirectionalLight = gl.getUniformLocation(gl.program, 'u_UseDirectionalLight');
@@ -396,7 +397,8 @@ export class AppComponent {
       gl.uniform1i(u_UseDirectionalLight, false);
     }
 
-    gl.uniform4fv(u_PointColor, Constants.pointColor.elements);
+    gl.uniform4fv(u_PointColor1, Constants.pointColor1.elements);
+    gl.uniform4fv(u_PointColor2, Constants.pointColor2.elements);
     gl.uniform3fv(u_LightColor, Constants.lightColor.elements);
     gl.uniform3f(u_LightDirection, this.directionalLight.x, this.directionalLight.y, this.directionalLight.z);
     gl.uniform3f(u_LightPosition, this.pointLight.x, this.pointLight.y, this.pointLight.z);
