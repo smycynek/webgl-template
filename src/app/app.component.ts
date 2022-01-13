@@ -358,6 +358,30 @@ export class AppComponent {
     return scaleMatrix;
   }
 
+  private errorCheck(location: number, attribute_name: string): void {
+    const err = this.gl.getError();
+    if (err !== 0) {
+      console.log(`get location ${attribute_name} error: ${err}`);
+      throw new Error('get location');
+    }
+
+    if (location < 0) {
+      console.log('Failed to get the storage location of ' + location);
+      throw new Error('Storage location');
+    }
+  }
+
+  private getAttribLocation(attribute_name: string): number {
+    const location = this.gl.getAttribLocation(this.gl.program, attribute_name);
+    this.errorCheck(location, attribute_name);
+    return location;
+  }
+
+  private getUniformLocation(attribute_name: string): number {
+    const location = this.gl.getUniformLocation(this.gl.program, attribute_name);
+    this.errorCheck(location, attribute_name);
+    return location;
+  }
 
   private loadGLData(gl: any): number {
     const indexBuffer = gl.createBuffer();
@@ -382,20 +406,20 @@ export class AppComponent {
     if (!GlUtil.initArrayBuffer(gl, 'a_Position', vertices, 3, gl.FLOAT)) return -1;
     if (!GlUtil.initArrayBuffer(gl, 'a_Normal', normals, 3, gl.FLOAT)) return -1;
 
-    const a_PointSize = gl.getAttribLocation(gl.program, 'a_PointSize');
-    const a_TriangleColor = gl.getAttribLocation(gl.program, 'a_TriangleColor');
-    const u_PointColor1 = gl.getUniformLocation(gl.program, 'u_PointColor1');
-    const u_PointColor2 = gl.getUniformLocation(gl.program, 'u_PointColor2');
-    const u_LightColor = gl.getUniformLocation(gl.program, 'u_LightColor');
-    const u_UseStaticColor = gl.getUniformLocation(gl.program, 'u_UseStaticColor');
-    const u_FancyPoints = gl.getUniformLocation(gl.program, 'u_FancyPoints');
-    const u_UseDirectionalLight = gl.getUniformLocation(gl.program, 'u_UseDirectionalLight');
-    const u_LightDirection = gl.getUniformLocation(gl.program, 'u_LightDirection');
-    const u_LightPosition = gl.getUniformLocation(gl.program, 'u_LightPosition');
-    const u_ModelMatrix = gl.getUniformLocation(gl.program, 'u_ModelMatrix');
-    const u_NormalMatrix = gl.getUniformLocation(gl.program, 'u_NormalMatrix');
-    const u_ViewMatrix = gl.getUniformLocation(gl.program, 'u_ViewMatrix');
-    const u_ProjMatrix = gl.getUniformLocation(gl.program, 'u_ProjMatrix');
+    const a_PointSize = this.getAttribLocation('a_PointSize');
+    const a_TriangleColor = this.getAttribLocation('a_TriangleColor');
+    const u_PointColor1 = this.getUniformLocation('u_PointColor1');
+    const u_PointColor2 = this.getUniformLocation('u_PointColor2');
+    const u_LightColor = this.getUniformLocation('u_LightColor');
+    const u_UseStaticColor = this.getUniformLocation('u_UseStaticColor');
+    const u_FancyPoints = this.getUniformLocation('u_FancyPoints');
+    const u_UseDirectionalLight = this.getUniformLocation('u_UseDirectionalLight');
+    const u_LightDirection = this.getUniformLocation('u_LightDirection');
+    const u_LightPosition = this.getUniformLocation('u_LightPosition');
+    const u_ModelMatrix = this.getUniformLocation('u_ModelMatrix');
+    const u_NormalMatrix = this.getUniformLocation('u_NormalMatrix');
+    const u_ViewMatrix = this.getUniformLocation('u_ViewMatrix');
+    const u_ProjMatrix = this.getUniformLocation('u_ProjMatrix');
 
     if (this.entityType == Constants.VERTEX) {
       gl.uniform1i(u_UseStaticColor, true); // If rendering points, render single color
