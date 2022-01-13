@@ -1,9 +1,10 @@
-import { Constants, ModelChoice } from './constants';
+import { Constants, ModelChoice, PointStyle } from './constants';
 import { Ortho, Perspective, Triple, tripleUniform } from './util/containers';
 
 // Note, right-handed coords, +Z out of screen to user, -Z away from the user.
 export class Defaults {
   public static readonly modelChoice = ModelChoice.Cube;
+  public static readonly pointStyle = PointStyle.Fancy;
   public static readonly directionalLight: Triple = new Triple(0.2, 0.4, 1.0);
   public static readonly pointLight: Triple = new Triple(1, 2, 3);
   public static readonly translation: Triple = tripleUniform(0);

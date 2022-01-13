@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import fragmentShaderSrc from '../assets/shaders/fragment-shader.glsl';
 import vertexShaderSrc from '../assets/shaders/vertex-shader.glsl';
 
-import { Constants, ModelChoice } from './constants';
+import { Constants, ModelChoice, PointStyle } from './constants';
 import { Defaults } from './defaults';
 import { GlUtil } from './lib/glUtil';
 import { Matrix4 } from './lib/math';
@@ -33,6 +33,7 @@ export class AppComponent {
   private models: Map<ModelChoice, Model> = new Map<ModelChoice, Model>();
 
   // Basic choices/toggles
+  public pointStyleChoice: PointStyle = Defaults.pointStyle;
   public modelChoice: ModelChoice = Defaults.modelChoice;
   public lightingType: string = Defaults.lightingType;
   public entityType: string = Defaults.entityType;
@@ -124,6 +125,17 @@ export class AppComponent {
     this.entityType = Constants.VERTEX;
     this.start();
   }
+
+  public setSimplePointsMode() {
+    this.pointStyleChoice = PointStyle.Simple;
+    this.start();
+  }
+
+  public setFancyPointsMode() {
+    this.pointStyleChoice = PointStyle.Fancy;
+    this.start();
+  }
+
 
   public setTriangleMode() {
     this.entityType = Constants.TRIANGLE;
@@ -376,6 +388,7 @@ export class AppComponent {
     const u_PointColor2 = gl.getUniformLocation(gl.program, 'u_PointColor2');
     const u_LightColor = gl.getUniformLocation(gl.program, 'u_LightColor');
     const u_UseStaticColor = gl.getUniformLocation(gl.program, 'u_UseStaticColor');
+    const u_FancyPoints = gl.getUniformLocation(gl.program, 'u_FancyPoints');
     const u_UseDirectionalLight = gl.getUniformLocation(gl.program, 'u_UseDirectionalLight');
     const u_LightDirection = gl.getUniformLocation(gl.program, 'u_LightDirection');
     const u_LightPosition = gl.getUniformLocation(gl.program, 'u_LightPosition');
@@ -386,6 +399,12 @@ export class AppComponent {
 
     if (this.entityType == Constants.VERTEX) {
       gl.uniform1i(u_UseStaticColor, true); // If rendering points, render single color
+
+      if (this.pointStyleChoice == PointStyle.Fancy) {
+        gl.uniform1i(u_FancyPoints, true);
+      } else {
+        gl.uniform1i(u_FancyPoints, false);
+      }
     }
     else {
       gl.uniform1i(u_UseStaticColor, false); // Otherwise, each fragment/face gets its own color

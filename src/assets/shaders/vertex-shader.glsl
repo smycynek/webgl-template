@@ -4,6 +4,7 @@ uniform vec3 u_LightColor;
 uniform vec3 u_LightDirection;
 uniform vec3 u_LightPosition;
 uniform bool u_UseDirectionalLight;
+uniform bool u_FancyPoints;
 attribute vec4 a_Position;
 uniform mat4 u_ViewMatrix;
 uniform mat4 u_ProjMatrix;
@@ -34,5 +35,11 @@ void main() {
   vec3 finalColor = u_LightColor * a_TriangleColor.rgb * brightnessScalar;
   v_Color = vec4(finalColor, a_TriangleColor.a);
   gl_Position = u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * a_Position;  // Set the vertex coordinates of the point
-  gl_PointSize = a_PointSize;
+
+  if (u_FancyPoints == true) {
+    gl_PointSize = a_PointSize;
+  }
+  else {
+    gl_PointSize = a_PointSize/3.0;
+  }
 }

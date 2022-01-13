@@ -7,6 +7,10 @@ export enum ModelChoice {
   UploadedFile = 4,
 }
 
+export enum PointStyle {
+  Simple = 1,
+  Fancy = 2,
+}
 export class Constants {
   public static readonly VERTEX = 'VERTEX';
   public static readonly TRIANGLE = 'TRIANGLE';
@@ -18,7 +22,7 @@ export class Constants {
   public static readonly pointColor1: Vector4 = new Vector4([1.0, 1.0, 0.0, 1.0]);
   public static readonly pointColor2: Vector4 = new Vector4([1.0, 0.0, 0.0, 1.0]);
   public static readonly lightColor: Vector3 = new Vector3([1.0, 1.0, 1.0]);
-  public static readonly pointSize = 5.0;
+  public static readonly pointSize = 6.0;
   public static readonly triangleColor: Vector4 = new Vector4([1, 1, 1, 1]);
 
 
