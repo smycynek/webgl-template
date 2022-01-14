@@ -1,3 +1,6 @@
+
+// Loop through the x and y coordinates of a vertex array, find the upper and lower bounds,
+// and calculate a reasonable scale factor for the viewport.
 export function getRecommendedScale(vertices: Float32Array): number {
   let xMin = 0;
   let xMax = 0;

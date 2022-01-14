@@ -1,29 +1,29 @@
-<div (window:resize)="onResize($event)" style="text-align:left;margin:0.5em;" [attr.init]="initScreen()">
+<div (window:resize)="handler.onResize($event)" style="text-align:left;margin:0.5em;" [attr.init]="initScreen()">
   <h1 class="banner">
     WebGL Angular/TypeScript/Webpack Template
   </h1>
   <div class="smallLabel"><a href="https://github.com/smycynek/webgl-template">
       https://github.com/smycynek/webgl-template</a> </div>
-  <canvas class="responsive-canvas" (click)="toggleSpinMode()"
+  <canvas class="responsive-canvas" (click)="handler.toggleSpinMode()"
     style="padding-bottom: 0px; margin-bottom: 0px;border:1px solid #000000;" id="gl_canvas"></canvas>
   <div class="smallLabel">Tap image to toggle spin.</div>
 
   <div style="text-align:left;margin:0.25em;padding:0.25em" class="container">
     <div class="row">
       <div class="col-3">
-        <input checked class="radioSpaced" type="radio" name="rModelChoice" (click)="setCubeModel()" />
+        <input checked class="radioSpaced" type="radio" name="rModelChoice" (click)="handler.setCubeModel()" />
         <span class="smallLabel">Cube</span>
       </div>
       <div class="col-3">
-        <input class="radioSpaced" type="radio" name="rModelChoice" (click)="setNinModel()" />
+        <input class="radioSpaced" type="radio" name="rModelChoice" (click)="handler.setNinModel()" />
         <span class="smallLabel">NIN</span>
       </div>
       <div class="col-3">
-        <input class="radioSpaced" type="radio" name="rModelChoice" (click)="setRookModel()" />
+        <input class="radioSpaced" type="radio" name="rModelChoice" (click)="handler.setRookModel()" />
         <span class="smallLabel">Rook</span>
       </div>
       <div class="col-3">
-        <input class="radioSpaced" type="radio" name="rModelChoice" (click)="setUploadedModel()" />
+        <input class="radioSpaced" type="radio" name="rModelChoice" (click)="handler.setUploadedModel()" />
         <span class="smallLabel">Custom</span>
       </div>
     </div>
@@ -32,7 +32,7 @@
         <span class="label">OBJ File <a href="https://github.com/smycynek/webgl-template#tips">(Tips)</a></span>
       </div>
       <div class="col-3">
-        <input (change)="onFileSelected($event)" class="radioSpaced" type="file" accept=".obj" name="rFile">
+        <input (change)="handler.onFileSelected($event)" class="radioSpaced" type="file" accept=".obj" name="rFile">
       </div>
     </div>
   </div>
@@ -47,11 +47,11 @@
           <span class="label">Lighting</span>
         </div>
         <div class="col-3">
-          <input class="radioSpaced" type="radio" name="rlightingType" (click)="setDirectionalLightMode()" />
+          <input class="radioSpaced" type="radio" name="rlightingType" (click)="handler.setDirectionalLightMode()" />
           <span class="smallLabel">Direction</span>
         </div>
         <div class="col-3">
-          <input checked class="radioSpaced" type="radio" name="rlightingType" (click)="setPointLightMode()" />
+          <input checked class="radioSpaced" type="radio" name="rlightingType" (click)="handler.setPointLightMode()" />
           <span class="smallLabel">Point</span>
         </div>
       </div>
@@ -60,11 +60,11 @@
           <span class="label">Entity</span>
         </div>
         <div class="col-3">
-          <input class="radioSpaced" type="radio" name="rentityType" (click)="setPointMode()" />
+          <input class="radioSpaced" type="radio" name="rentityType" (click)="handler.setPointMode()" />
           <span class="smallLabel">Vertex</span>
         </div>
         <div class="col-3">
-          <input class="radioSpaced" checked type="radio" name="rentityType" (click)="setTriangleMode()" />
+          <input class="radioSpaced" checked type="radio" name="rentityType" (click)="handler.setTriangleMode()" />
           <span class="smallLabel">Triangle</span>
         </div>
       </div>
@@ -74,11 +74,11 @@
           <span class="label">Projection</span>
         </div>
         <div class="col-3">
-          <input class="radioSpaced" type="radio" name="rprojectionType" (click)="setOrthoMode()" /><span
+          <input class="radioSpaced" type="radio" name="rprojectionType" (click)="handler.setOrthoMode()" /><span
             class="smallLabel">Ortho</span>
         </div>
         <div class="col-4">
-          <input class="radioSpaced" checked type="radio" name="rprojectionType" (click)="setPerspectiveMode()" /><span
+          <input class="radioSpaced" checked type="radio" name="rprojectionType" (click)="handler.setPerspectiveMode()" /><span
             class="smallLabel">Perspective</span>
         </div>
       </div>
@@ -330,11 +330,11 @@
     <div style="text-align:left;margin:0.25em;padding:0.25em" class="container">
     <div class="row">
       <div class="col-3">
-        <input [disabled]="entityType =='TRIANGLE'" checked class="radioSpaced" type="radio" name="rPointStyle" (click)="setFancyPointsMode()" />
+        <input [disabled]="entityType =='TRIANGLE'" checked class="radioSpaced" type="radio" name="rPointStyle" (click)="handler.setFancyPointsMode()" />
         <span class="smallLabel">Fancy</span>
       </div>
       <div class="col-3">
-        <input [disabled]="entityType =='TRIANGLE'"  class="radioSpaced" type="radio" name="rPointStyle" (click)="setSimplePointsMode()" />
+        <input [disabled]="entityType =='TRIANGLE'"  class="radioSpaced" type="radio" name="rPointStyle" (click)="handler.setSimplePointsMode()" />
         <span class="smallLabel">Simple</span>
       </div>
  </div>
