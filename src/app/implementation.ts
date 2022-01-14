@@ -198,7 +198,7 @@ export class Implementation {
     this.app.gl.vertexAttrib1f(a_PointSize, Constants.pointSize);
 
   }
-  public getCanvas(): HTMLElement | null {
+  private getCanvas(): HTMLElement | null {
     const canvas: HTMLElement | null = document.getElementById('gl_canvas');
     if (!canvas) {
       console.log('Failed to get canvas');
@@ -207,11 +207,14 @@ export class Implementation {
     return canvas;
   }
 
-  public scaleCanvas(canvas: HTMLCanvasElement): void {
+  public scaleCanvas(): void {
     if (this.app.gl) {
-      canvas.width = canvas.clientWidth;
-      canvas.height = canvas.clientHeight;
-      this.app.gl.viewport(0, 0, canvas.width, canvas.height);
+      if ((this.app.gl.canvas.width !== this.app.gl.canvas.clientWidth) || (this.app.gl.canvas.height !== this.app.gl.canvas.clientHeight)) {
+        console.log(`scaleCanvas: canvas.width ${this.app.gl.canvas.width}, canvas.height ${this.app.gl.canvas.height}, canvas.clientWidth ${this.app.gl.canvas.clientWidth}, canvas.clientHeight ${this.app.gl.canvas.clientHeight} `);
+        this.app.gl.canvas.width = this.app.gl.canvas.clientWidth;
+        this.app.gl.canvas.height = this.app.gl.canvas.clientHeight;
+      }
+      this.app.gl.viewport(0, 0, this.app.gl.canvas.width, this.app.gl.canvas.height);
     }
   }
 

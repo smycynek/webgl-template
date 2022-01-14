@@ -1,9 +1,5 @@
+
 // Basic 3-component container
-
-export function tripleUniform(uniform: number): Triple {
-  return new Triple(uniform, uniform, uniform);
-}
-
 export class Triple {
   public x: number;
   public y: number;
@@ -14,6 +10,12 @@ export class Triple {
     this.y = y;
     this.z = z;
   }
+}
+
+
+// Make a triple with the same number in each field
+export function tripleUniform(uniform: number): Triple {
+  return new Triple(uniform, uniform, uniform);
 }
 
 // Basic ortho parameter container

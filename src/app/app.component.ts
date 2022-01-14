@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+
 import fragmentShaderSrc from '../assets/shaders/fragment-shader.glsl';
 import vertexShaderSrc from '../assets/shaders/vertex-shader.glsl';
 import { Constants, ModelChoice, PointStyle } from './constants';
@@ -68,11 +69,6 @@ export class AppComponent {
         throw Error('No WebGL context available.');
       }
 
-      const canvas = this.implementation.getCanvas();
-      if (canvas && canvas instanceof HTMLCanvasElement) {
-        this.implementation.scaleCanvas(canvas);
-      }
-
       this.shaderProgram = GlUtil.createProgram(this.gl, vertexShaderSrc, fragmentShaderSrc);
 
       this.gl.useProgram(this.shaderProgram);
@@ -119,7 +115,7 @@ export class AppComponent {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BIT);
     gl.enable(gl.CULL_FACE);
     gl.cullFace(gl.BACK);
-
+    this.implementation.scaleCanvas();
     const pointCount = this.implementation.loadGLData(gl);
     if (pointCount <= 0) {
       return;

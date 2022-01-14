@@ -110,10 +110,18 @@ export class UiCallbacks {
   }
 
   public onResize($event: any) {
-    const canvas = this.app.implementation.getCanvas();
-    if (canvas && canvas instanceof HTMLCanvasElement) {
-      this.app.implementation.scaleCanvas(canvas);
+    this.app.implementation.scaleCanvas();
+    console.log('Resize');
+    if (!this.app.spinning) {
+      this.draw();
     }
+  }
+
+  private draw(): void {
+    console.log('Draw');
+    requestAnimationFrame(function () {
+      globalApp.start();
+    });
   }
 
   // Main animation loop
