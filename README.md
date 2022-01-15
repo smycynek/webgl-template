@@ -38,10 +38,14 @@ from  *WebGL Programming Guide*  and did a rough port to TypeScript to make them
 
 ## Tips
 Default lighting, scale, and position for custom uploaded models are just best guesses, and the parser
-may occasionally fail -- I can't fully support the obj spec with a 3rd-party parser in my spare time :)
-Try using directional lighting and changing scale and transform if you can't see
-your model.  Try https://stevenvictor.net/glta/assets/box_hole.obj for a sample model to upload, or create
-a simple one in Blender or Onshape.  Colors and textures are currently not supported.
+may occasionally fail on models you create or download -- I can't fully support the obj spec with a 3rd-party parser in my spare time :)
+
+Try using directional lighting and changing the scale and translation if you can't see
+your model.  See
+* https://stevenvictor.net/glta/assets/models/box_hole.obj
+* https://stevenvictor.net/glta/assets/models/teapot.obj
+* https://stevenvictor.net/glta/assets/models/skull.obj
+for a few tested sample models to upload, or create a simple one in Blender, Onshape, or other 3D tool.  Colors and textures are currently not supported.
 
 ## Live demo
 https://stevenvictor.net/glta
