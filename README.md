@@ -15,7 +15,7 @@ The ones I saw so far claiming the above were pretty badly broken.  I also hated
 writing `glsl` shaders as strings, especially strings concatenated with `\n` and `+`,
 so thankfully, there are webpack loaders available.
 
-I made the NIN, rook, and cube models in https://cad.onshape.com
+I made the NIN, rook, and box models in https://cad.onshape.com
 
 Finally, I took some of the WebGL library code for math and loading shaders, buffers, and obj files
 from  *WebGL Programming Guide*  and did a rough port to TypeScript to make them a little nicer to work with in VS Code and Angular.
@@ -42,7 +42,6 @@ may occasionally fail on models you create or download -- I can't fully support 
 
 Try using directional lighting and changing the scale and translation if you can't see
 your model.  See
-* https://stevenvictor.net/glta/assets/models/box_hole.obj
 * https://stevenvictor.net/glta/assets/models/teapot.obj
 * https://stevenvictor.net/glta/assets/models/skull.obj
 for a few tested sample models to upload, or create a simple one in Blender, Onshape, or other 3D tool.  Colors and textures are currently not supported.

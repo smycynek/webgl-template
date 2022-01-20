@@ -2,7 +2,7 @@
 
 rm glta.zip
 
-echo "<div class='version'>$(date +%s)</div>" > ./src/app/version.html
+echo "<div class='version'>version: $(date +%s)</div>" > ./src/app/version.html
 npx ng build --configuration=production --base-href /glta/
 
 zip -r glta.zip glta

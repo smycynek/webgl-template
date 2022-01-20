@@ -93,10 +93,10 @@ export class AppComponent {
               this.models.set(ModelChoice.ChessRook, rook);
             });
         }).then(() => {
-          fetch('assets/models/cube.obj')
+          fetch('assets/models/box_hole.obj')
             .then(response => response.text())
             .then(data => {
-              const parsedObj: OBJDoc = new OBJDoc('cube.obj');
+              const parsedObj: OBJDoc = new OBJDoc('box_hole.obj');
               parsedObj.parse(data, 1, true);
               const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
               const cube: Model = new Model(drawingInfo.vertices, drawingInfo.normals, drawingInfo.indices, 1.5);
