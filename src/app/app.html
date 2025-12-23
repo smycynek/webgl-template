@@ -15,7 +15,7 @@
 
   <details>
     <summary>Model</summary>
-    <div style="margin-left: 10px">
+    <div style="margin-left: 5px">
       <div>
         <label class="radio-label">Obj file </label>
         <input type="radio" name="rModelChoice" (click)="handler.setUploadedModel()" />
@@ -48,7 +48,7 @@
     <summary>Basics</summary>
     @if (entityType() === 'TRIANGLE') {
       <h2>Lighting</h2>
-      <div style="margin-left: 10px">
+      <div style="margin-left: 5px">
         <div>
           <label class="radio-label">Direction </label>
           <input type="radio" name="rlightingType" (click)="handler.setDirectionalLightMode()" />
@@ -60,7 +60,7 @@
       </div>
     }
     <h2>Entity</h2>
-    <div style="margin-left: 10px">
+    <div style="margin-left: 5px">
       <div>
         <label class="radio-label"> Vertex </label>
         <input type="radio" name="rentityType" (click)="handler.setPointMode()" />
@@ -72,7 +72,7 @@
       </div>
     </div>
     <h2>Projection</h2>
-    <div style="margin-left: 10px">
+    <div style="margin-left: 5px">
       <div>
         <label class="radio-label">Ortho </label>
         <input type="radio" name="rprojectionType" (click)="handler.setOrthoMode()" />
@@ -87,7 +87,7 @@
   <details>
     <summary>Transform</summary>
 
-    <div style="margin-left: 10px">
+    <div style="margin-left: 5px">
       <label class="text-label">Scale-X </label
       ><input step="0.1" [(ngModel)]="scale.x" #ctrl="ngModel" (change)="start()" type="number" />
       <label class="text-label">Scale-Y </label
@@ -96,8 +96,8 @@
       ><input step="0.1" [(ngModel)]="scale.z" #ctrl="ngModel" (change)="start()" type="number" />
     </div>
 
-    <div style="margin-left: 10px">
-      <label class="text-label">Translate-X </label
+    <div style="margin-left: 5px">
+      <label class="text-label">Trans-X </label
       ><input
         step="0.1"
         [(ngModel)]="translate.x"
@@ -105,7 +105,7 @@
         (change)="start()"
         type="number"
       />
-      <label class="text-label">Translate-Y </label
+      <label class="text-label">Trans-Y </label
       ><input
         step="0.1"
         [(ngModel)]="translate.y"
@@ -113,7 +113,7 @@
         (change)="start()"
         type="number"
       />
-      <label class="text-label">Translate-Z </label
+      <label class="text-label">Trans-Z </label
       ><input
         step="0.1"
         [(ngModel)]="translate.z"
@@ -123,7 +123,7 @@
       />
     </div>
 
-    <div style="margin-left: 10px">
+    <div style="margin-left: 5px">
       <label class="text-label">Rotate-X </label
       ><input
         step="0.1"
@@ -148,7 +148,7 @@
   <details>
     <summary>Camera</summary>
     <h2>Orthographic</h2>
-    <div style="margin-left: 10px">
+    <div style="margin-left: 5px">
       <div>
         <label class="text-label">Left</label
         ><input
@@ -295,8 +295,8 @@
     <details>
       <summary>Lighting</summary>
 
-      <div style="margin-left: 10px">
-        <label class="text-label">Directional-X </label
+      <div style="margin-left: 5px">
+        <label class="text-label">Dir-X </label
         ><input
           [disabled]="lightingType() === 'POINT_LIGHT'"
           step="0.1"
@@ -306,7 +306,7 @@
           type="number"
         />
 
-        <label class="text-label">Directional-Y </label
+        <label class="text-label">Dir-Y </label
         ><input
           [disabled]="lightingType() === 'POINT_LIGHT'"
           step="0.1"
@@ -316,7 +316,7 @@
           type="number"
         />
 
-        <label class="text-label">Directional-Z </label
+        <label class="text-label">Dir-Z </label
         ><input
           [disabled]="lightingType() === 'POINT_LIGHT'"
           step="0.1"
@@ -327,7 +327,7 @@
         />
       </div>
 
-      <div style="margin-left: 10px">
+      <div style="margin-left: 5px">
         <label class="text-label">Point-X </label
         ><input
           [disabled]="lightingType() === 'DIRECTIONAL_LIGHT'"
@@ -364,7 +364,7 @@
   @if (entityType() === 'VERTEX') {
     <details>
       <summary>Vertices</summary>
-      <div style="margin-left: 10px">
+      <div style="margin-left: 5px">
         <div>
           <label class="radio-label"> Fancy </label>
           <input checked type="radio" name="rPointStyle" (click)="handler.setFancyPointsMode()" />

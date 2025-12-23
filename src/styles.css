@@ -28,7 +28,7 @@ input {
 input[type='number'] {
   margin-left: 3px;
   size: 5;
-  width: 60px;
+  width: 50px;
   margin-right: 7px;
 }
 
@@ -44,7 +44,7 @@ input[type='radio'] {
 
 .radio-label {
   display: inline-block;
-  width: 70px;
+  width: 60px;
   margin-right: 4px;
   padding-right: 0px;
   text-align: right;
@@ -52,7 +52,7 @@ input[type='radio'] {
 
 .text-label {
   display: inline-block;
-  width: 80px;
+  width: 45px;
   margin-right: 0px;
   padding-right: 0px;
   text-align: right;
@@ -81,7 +81,7 @@ h3 {
 summary {
   font-weight: bold;
   font-size: 1.2em;
-  margin-left: -20px;
+  margin-left: -10px;
 }
 
 input:disabled {
@@ -97,5 +97,5 @@ input[type='file']::file-selector-button {
 }
 
 details {
-  margin-left: 20px;
+  margin-left: 2px;
 }
