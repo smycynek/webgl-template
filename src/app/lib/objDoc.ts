@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/prefer-for-of */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-var */
 // Adjusted for TypeScript
 // OBJViewer.js (c) 2012 matsuda and itami
@@ -7,8 +10,13 @@ import { Vector3 } from './math';
 // OBJParser
 // ------------------------------------------------------------------------------
 
-
-export function readOBJFile(fileName: string, gl: any, model: any, scale: number, reverse: boolean) {
+export function readOBJFile(
+  fileName: string,
+  gl: any,
+  model: any,
+  scale: number,
+  reverse: boolean,
+) {
   const request = new XMLHttpRequest();
   request.onreadystatechange = function () {
     if (request.readyState === 4 && request.status !== 404) {
@@ -16,12 +24,18 @@ export function readOBJFile(fileName: string, gl: any, model: any, scale: number
     }
   };
   request.open('GET', fileName, true); // Create a request to acquire the file
-  request.send();                      // Send the request
+  request.send(); // Send the request
 }
-let g_objDoc;
+let g_objDoc = null;
 
-export function onReadOBJFile(fileString: string, fileName: string, gl: any, scale: number, reverse: boolean) {
-  const objDoc = new OBJDoc(fileName);  // Create a OBJDoc object
+export function onReadOBJFile(
+  fileString: string,
+  fileName: string,
+  gl: any,
+  scale: number,
+  reverse: boolean,
+) {
+  const objDoc = new OBJDoc(fileName); // Create a OBJDoc object
   const result = objDoc.parse(fileString, scale, reverse); // Parse the file
   if (!result) {
     console.log('OBJ file parsing error.');
@@ -32,30 +46,30 @@ export function onReadOBJFile(fileString: string, fileName: string, gl: any, sca
 
 // Analyze the material file
 function onReadMTLFile(fileString: string, mtl: any) {
-  const lines: Array<string | null> = fileString.split('\n');  // Break up into lines and store them as array
-  lines.push(null);           // Append null
-  let index = 0;              // Initialize index of line
+  const lines: (string | null)[] = fileString.split('\n'); // Break up into lines and store them as array
+  lines.push(null); // Append null
+  let index = 0; // Initialize index of line
 
   // Parse line by line
-  let line;      // A string in the line to be parsed
+  let line; // A string in the line to be parsed
   let name = ''; // Material name
   let sp: StringParser;
   while ((line = lines[index++]) != null) {
-    sp = new StringParser(line);               // init StringParser
-    const command = sp.getWord();     // Get command
-    if (command == null) continue;  // check null command
+    sp = new StringParser(line); // init StringParser
+    const command = sp.getWord(); // Get command
+    if (command == null) continue; // check null command
 
     switch (command) {
-    case '#':
-      continue;    // Skip comments
-    case 'newmtl': // Read Material chunk
-      name = mtl.parseNewmtl(sp);    // Get name
-      continue; // Go to the next line
-    case 'Kd':   // Read normal
-      if (name == '') continue; // Go to the next line because of Error
-      mtl.materials.push(mtl.parseRGB(sp, name));
-      name = '';
-      continue; // Go to the next line
+      case '#':
+        continue; // Skip comments
+      case 'newmtl': // Read Material chunk
+        name = mtl.parseNewmtl(sp); // Get name
+        continue; // Go to the next line
+      case 'Kd': // Read normal
+        if (name == '') continue; // Go to the next line because of Error
+        mtl.materials.push(mtl.parseRGB(sp, name));
+        name = '';
+        continue; // Go to the next line
     }
   }
   mtl.complete = true;
@@ -64,66 +78,65 @@ function onReadMTLFile(fileString: string, mtl: any) {
 // OBJDoc object
 // Constructor
 
-
 export class OBJDoc {
   private fileName: string;
   private mtls: any;
-  private objects: Array<OBJObject>;
-  private vertices: Array<Vertex>;
-  private normals: Array<Normal>;
+  private objects: OBJObject[];
+  private vertices: Vertex[];
+  private normals: Normal[];
 
   constructor(fileName: string) {
     this.fileName = fileName;
-    this.mtls = new Array(0);      // Initialize the property for MTL
-    this.objects = new Array(0);   // Initialize the property for Object
-    this.vertices = new Array(0);  // Initialize the property for Vertex
-    this.normals = new Array(0);   // Initialize the property for Normal
+    this.mtls = new Array(0); // Initialize the property for MTL
+    this.objects = new Array(0); // Initialize the property for Object
+    this.vertices = new Array(0); // Initialize the property for Vertex
+    this.normals = new Array(0); // Initialize the property for Normal
   }
 
   // Parsing the OBJ file
   public parse(fileString: string, scale: number, reverse: boolean) {
-    const lines: Array<string | null> = fileString.split('\n');  // Break up into lines and store them as array
+    const lines: (string | null)[] = fileString.split('\n'); // Break up into lines and store them as array
     lines.push(null); // Append null
-    let index = 0;    // Initialize index of line
+    let index = 0; // Initialize index of line
     console.log('Parse ' + this.fileName);
     let currentObject = null;
     let currentMaterialName = '';
 
     // Parse line by line
-    let line;         // A string in the line to be parsed
-    let sp: StringParser;   // Create StringParser
+    let line; // A string in the line to be parsed
+    let sp: StringParser; // Create StringParser
     while ((line = lines[index++]) != null) {
-      sp = new StringParser(line);                  // init StringParser
-      const command = sp.getWord();     // Get command
-      if (command == null) continue;  // check null command
+      sp = new StringParser(line); // init StringParser
+      const command = sp.getWord(); // Get command
+      if (command == null) continue; // check null command
 
       switch (command) {
-      case '#':
-        continue;  // Skip comments
-        continue; // Go to the next line
-      case 'o':
-      case 'g':   // Read Object name
-        var object = this.parseObjectName(sp);
-        this.objects.push(object);
-        currentObject = object;
-        continue; // Go to the next line
-      case 'v':   // Read vertex
-        var vertex = this.parseVertex(sp, scale);
-        this.vertices.push(vertex);
-        continue; // Go to the next line
-      case 'vn':   // Read normal
-        var normal = this.parseNormal(sp);
-        this.normals.push(normal);
-        continue; // Go to the next line
-      case 'usemtl': // Read Material name
-        currentMaterialName = this.parseUsemtl(sp);
-        continue; // Go to the next line
-      case 'f': // Read face
-        var face = this.parseFace(sp, currentMaterialName, this.vertices, reverse);
-        if (currentObject) {
-          currentObject.addFace(face);
-        }
-        continue; // Go to the next line
+        case '#':
+          continue; // Skip comments
+          continue; // Go to the next line
+        case 'o':
+        case 'g': // Read Object name
+          var object = this.parseObjectName(sp);
+          this.objects.push(object);
+          currentObject = object;
+          continue; // Go to the next line
+        case 'v': // Read vertex
+          var vertex = this.parseVertex(sp, scale);
+          this.vertices.push(vertex);
+          continue; // Go to the next line
+        case 'vn': // Read normal
+          var normal = this.parseNormal(sp);
+          this.normals.push(normal);
+          continue; // Go to the next line
+        case 'usemtl': // Read Material name
+          currentMaterialName = this.parseUsemtl(sp);
+          continue; // Go to the next line
+        case 'f': // Read face
+          var face = this.parseFace(sp, currentMaterialName, this.vertices, reverse);
+          if (currentObject) {
+            currentObject.addFace(face);
+          }
+          continue; // Go to the next line
       }
     }
 
@@ -136,25 +149,25 @@ export class OBJDoc {
     let dirPath = '';
     if (i > 0) dirPath = fileName.substr(0, i + 1);
 
-    return dirPath + sp.getWord();   // Get path
+    return dirPath + sp.getWord(); // Get path
   }
 
   private parseObjectName(sp: any) {
     const name = sp.getWord();
-    return (new OBJObject(name));
+    return new OBJObject(name);
   }
   private parseVertex = function (sp: any, scale: number) {
     const x = sp.getFloat() * scale;
     const y = sp.getFloat() * scale;
     const z = sp.getFloat() * scale;
-    return (new Vertex(x, y, z));
+    return new Vertex(x, y, z);
   };
 
   private parseNormal(sp: any) {
     const x = sp.getFloat();
     const y = sp.getFloat();
     const z = sp.getFloat();
-    return (new Normal(x, y, z));
+    return new Normal(x, y, z);
   }
 
   private parseUsemtl(sp: any) {
@@ -164,7 +177,7 @@ export class OBJDoc {
   private parseFace(sp: StringParser, materialName: string, vertices: any, reverse: boolean) {
     const face = new Face(materialName);
     // get indices
-    for (; ;) {
+    for (;;) {
       const word = sp.getWord();
       if (word == null) break;
       const subWords = word.split('/');
@@ -184,25 +197,30 @@ export class OBJDoc {
     const v0 = [
       vertices[face.vIndices[0]].x,
       vertices[face.vIndices[0]].y,
-      vertices[face.vIndices[0]].z];
+      vertices[face.vIndices[0]].z,
+    ];
     const v1 = [
       vertices[face.vIndices[1]].x,
       vertices[face.vIndices[1]].y,
-      vertices[face.vIndices[1]].z];
+      vertices[face.vIndices[1]].z,
+    ];
     const v2 = [
       vertices[face.vIndices[2]].x,
       vertices[face.vIndices[2]].y,
-      vertices[face.vIndices[2]].z];
+      vertices[face.vIndices[2]].z,
+    ];
 
     //
     let normal = calcNormal(v0, v1, v2);
     //
     if (normal == null) {
-      if (face.vIndices.length >= 4) { //
+      if (face.vIndices.length >= 4) {
+        //
         const v3 = [
           vertices[face.vIndices[3]].x,
           vertices[face.vIndices[3]].y,
-          vertices[face.vIndices[3]].z];
+          vertices[face.vIndices[3]].z,
+        ];
         normal = calcNormal(v1, v2, v3);
       }
       if (normal == null) {
@@ -237,7 +255,6 @@ export class OBJDoc {
     return face;
   }
 
-
   // Check Materials
   private isMTLComplete() {
     if (this.mtls.length == 0) return true;
@@ -252,11 +269,11 @@ export class OBJDoc {
     for (let i = 0; i < this.mtls.length; i++) {
       for (let j = 0; j < this.mtls[i].materials.length; j++) {
         if (this.mtls[i].materials[j].name == name) {
-          return (this.mtls[i].materials[j].color);
+          return this.mtls[i].materials[j].color;
         }
       }
     }
-    return (new Color(0.8, 0.8, 0.8, 1));
+    return new Color(0.8, 0.8, 0.8, 1);
   }
 
   // ------------------------------------------------------------------------------
@@ -316,14 +333,13 @@ export class OBJDoc {
   }
 }
 
-
 // ------------------------------------------------------------------------------
 // Material Object
 // ------------------------------------------------------------------------------
 export class Material {
   name: any;
   color: Color;
-  constructor(name:string, r:number, g:number, b:number, a:number) {
+  constructor(name: string, r: number, g: number, b: number, a: number) {
     this.name = name;
     this.color = new Color(r, g, b, a);
   }
@@ -336,7 +352,7 @@ export class Vertex {
   x: number;
   y: number;
   z: number;
-  constructor(x:number, y: number, z: number) {
+  constructor(x: number, y: number, z: number) {
     this.x = x;
     this.y = y;
     this.z = z;
@@ -378,14 +394,13 @@ export class Color {
 // ------------------------------------------------------------------------------
 export class OBJObject {
   name: string;
-  faces: Array<Face>;
+  faces: Face[];
   numIndices: number;
   constructor(name: string) {
     this.name = name;
     this.faces = new Array(0);
     this.numIndices = 0;
   }
-
 
   public addFace(face: Face) {
     this.faces.push(face);
@@ -397,7 +412,7 @@ export class OBJObject {
 // Face Object
 // ------------------------------------------------------------------------------
 export class Face {
-  vIndices: Array<number>;
+  vIndices: number[];
   nIndices: any;
   numIndices: any;
   materialName: any;
@@ -419,7 +434,12 @@ export class DrawingInfo {
   normals: Float32Array;
   colors: Float32Array;
   indices: Uint16Array;
-  constructor(vertices: Float32Array, normals: Float32Array, colors: Float32Array, indices: Uint16Array) {
+  constructor(
+    vertices: Float32Array,
+    normals: Float32Array,
+    colors: Float32Array,
+    indices: Uint16Array,
+  ) {
     this.vertices = vertices;
     this.normals = normals;
     this.colors = colors;
@@ -454,16 +474,16 @@ export class StringParser {
   private skipToNextWord() {
     this.skipDelimiters();
     const n = getWordLength(this.str, this.index);
-    this.index += (n + 1);
+    this.index += n + 1;
   }
 
   // Get word
-  public getWord() : string | null {
+  public getWord(): string | null {
     this.skipDelimiters();
     const n = getWordLength(this.str, this.index);
     if (n == 0) return null;
     const word = this.str.substr(this.index, n);
-    this.index += (n + 1);
+    this.index += n + 1;
     return word;
   }
 
@@ -489,10 +509,9 @@ export class StringParser {
 // Get the length of word
 function getWordLength(str: string, start: number) {
   const n = 0;
-  for(var i = start, len = str.length; i < len; i++){
+  for (var i = start, len = str.length; i < len; i++) {
     const c = str.charAt(i);
-    if (c == '\t' || c == ' ' || c == '(' || c == ')' || c == '"')
-      break;
+    if (c == '\t' || c == ' ' || c == '(' || c == ')' || c == '"') break;
   }
   return i - start;
 }
@@ -500,11 +519,11 @@ function getWordLength(str: string, start: number) {
 // ------------------------------------------------------------------------------
 // Common function
 // ------------------------------------------------------------------------------
-function calcNormal(p0: Array<number>, p1: Array<number>, p2: Array<number>) {
+function calcNormal(p0: number[], p1: number[], p2: number[]) {
   // v0: a vector from p1 to p0, v1; a vector from p1 to p2
   const v0 = new Float32Array(3);
   const v1 = new Float32Array(3);
-  for (let i = 0; i < 3; i++){
+  for (let i = 0; i < 3; i++) {
     v0[i] = p0[i] - p1[i];
     v1[i] = p2[i] - p1[i];
   }

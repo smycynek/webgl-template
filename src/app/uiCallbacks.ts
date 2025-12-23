@@ -1,14 +1,14 @@
-import { AppComponent } from './app.component';
+import { App } from './app';
 import { Constants, ModelChoice, PointStyle } from './constants';
 import { DrawingInfo, OBJDoc } from './lib/objDoc';
-import { Model, tripleUniform } from './util/containers';
+import { Model, Triple, tripleUniform } from './util/containers';
 import { getRecommendedScale } from './util/scale';
 
-let globalApp: AppComponent;
+let globalApp: App;
 
 // Used by main Angular AppComponent for button/input handlers
 export class UiCallbacks {
-  constructor(public app: AppComponent) {
+  constructor(public app: App) {
     globalApp = this.app;
   }
 
@@ -45,22 +45,22 @@ export class UiCallbacks {
 
   // Methods for other basic controls
   public setPointLightMode() {
-    this.app.lightingType = Constants.POINT_LIGHT;
+    this.app.lightingType.set(Constants.POINT_LIGHT);
     this.app.start();
   }
 
   public toggleSpinMode() {
-    this.app.spinning = !this.app.spinning;
+    this.app.spinning.set(!this.app.spinning());
     this.spin();
   }
 
   public setDirectionalLightMode() {
-    this.app.lightingType = Constants.DIRECTIONAL_LIGHT;
+    this.app.lightingType.set(Constants.DIRECTIONAL_LIGHT);
     this.app.start();
   }
 
   public setPointMode() {
-    this.app.entityType = Constants.VERTEX;
+    this.app.entityType.set(Constants.VERTEX);
     this.app.start();
   }
 
@@ -74,33 +74,38 @@ export class UiCallbacks {
     this.app.start();
   }
 
-
   public setTriangleMode() {
-    this.app.entityType = Constants.TRIANGLE;
+    this.app.entityType.set(Constants.TRIANGLE);
     this.app.start();
   }
 
   public setOrthoMode() {
-    this.app.projectionType = Constants.ORTHO;
-    this.app.eye.z = 1;
+    this.app.projectionType.set(Constants.ORTHO);
+    this.app.eye.set(new Triple(this.app.eye().x, this.app.eye().y, 1));
     this.app.start();
   }
 
   public setPerspectiveMode() {
-    this.app.projectionType = Constants.PERSPECTIVE;
-    this.app.eye.z = 4.0;
+    this.app.projectionType.set(Constants.PERSPECTIVE);
+    this.app.eye.set(new Triple(this.app.eye().x, this.app.eye().y, 4.0));
     this.app.start();
   }
 
   // Handler for uploading model files
-  public onFileSelected($event: any) {
-    const file: File = $event.target.files[0];
+  public onFileSelected($event: Event) {
+    const target = $event.target as HTMLInputElement;
+    const file: File | null | undefined = target.files?.item(0);
     if (file) {
-      file.text().then(data => {
+      file.text().then((data) => {
         const parsedObj: OBJDoc = new OBJDoc(file.name);
         parsedObj.parse(data, 1, true);
         const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
-        const uploaded = new Model(drawingInfo.vertices, drawingInfo.normals, drawingInfo.indices, getRecommendedScale(drawingInfo.vertices));
+        const uploaded = new Model(
+          drawingInfo.vertices,
+          drawingInfo.normals,
+          drawingInfo.indices,
+          getRecommendedScale(drawingInfo.vertices),
+        );
         this.app.models.set(ModelChoice.UploadedFile, uploaded);
         this.app.modelChoice = ModelChoice.UploadedFile;
         this.app.scale = tripleUniform(uploaded.scale);
@@ -109,30 +114,15 @@ export class UiCallbacks {
     }
   }
 
-  public onResize($event: any) {
-    this.app.implementation.scaleCanvas();
-    console.log('Resize');
-    if (!this.app.spinning) {
-      this.draw();
-    }
-  }
-
-  private draw(): void {
-    console.log('Draw');
-    requestAnimationFrame(function () {
-      globalApp.start();
-    });
-  }
-
   // Main animation loop
   public spin() {
-    if (this.app.spinning) {
+    if (this.app.spinning()) {
       requestAnimationFrame(function () {
         globalApp.rotation.y += 1;
         if (globalApp.rotation.y == 360) {
           globalApp.rotation.y = 0;
         }
-        globalApp.start();
+        globalApp.start(false);
         globalApp.handler.spin();
       });
     }

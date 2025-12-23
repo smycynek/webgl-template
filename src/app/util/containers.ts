@@ -1,4 +1,3 @@
-
 // Basic 3-component container
 export class Triple {
   public x: number;
@@ -11,7 +10,6 @@ export class Triple {
     this.z = z;
   }
 }
-
 
 // Make a triple with the same number in each field
 export function tripleUniform(uniform: number): Triple {

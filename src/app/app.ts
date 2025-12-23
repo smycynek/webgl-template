@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Component, signal } from '@angular/core';
 
 import fragmentShaderSrc from '../assets/shaders/fragment-shader.glsl';
 import vertexShaderSrc from '../assets/shaders/vertex-shader.glsl';
@@ -8,14 +9,16 @@ import { Implementation } from './implementation';
 import { GlUtil } from './lib/glUtil';
 import { DrawingInfo, OBJDoc } from './lib/objDoc';
 import { UiCallbacks } from './uiCallbacks';
-import { Model, Ortho, Triple } from './util/containers';
+import { Model, Ortho, Perspective, Triple } from './util/containers';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.template.html',
-  styles: []
+  templateUrl: './app.html',
+  styles: [],
+  imports: [FormsModule],
 })
-export class AppComponent {
+export class App {
   // startup, spin control
   constructor() {
     this.handler.spin();
@@ -26,8 +29,8 @@ export class AppComponent {
   public implementation = new Implementation(this);
 
   public init = false;
-  public spinning = true;
-  public logging = false;
+  public spinning = signal(true);
+  public logging = signal(false);
   public gl: any = null;
   private shaderProgram: any = null;
 
@@ -37,9 +40,9 @@ export class AppComponent {
   // Basic choices/toggles
   public pointStyleChoice: PointStyle = Defaults.pointStyle;
   public modelChoice: ModelChoice = Defaults.modelChoice;
-  public lightingType: string = Defaults.lightingType;
-  public entityType: string = Defaults.entityType;
-  public projectionType = Defaults.projectionType;
+  public lightingType = signal(Defaults.lightingType);
+  public entityType = signal(Defaults.entityType);
+  public projectionType = signal(Defaults.projectionType);
 
   // Basic transforms
   public translate: Triple = Defaults.translation;
@@ -47,7 +50,7 @@ export class AppComponent {
   public scale: Triple = Defaults.scale;
 
   // View control
-  public eye: Triple = Defaults.eye;
+  public eye = signal(Defaults.eye);
   public up: Triple = Defaults.up;
   public look: Triple = Defaults.look;
 
@@ -57,7 +60,7 @@ export class AppComponent {
 
   // Projection parameters
   public ortho: Ortho = Defaults.ortho;
-  public perspective = Defaults.perspective;
+  public perspective: Perspective = Defaults.perspective;
 
   // GetWebGL context, load models, init shaders, and call start() to start rendering
   public initScreen() {
@@ -74,32 +77,49 @@ export class AppComponent {
       this.gl.useProgram(this.shaderProgram);
       this.gl.program = this.shaderProgram;
 
-      fetch('assets/models/nin.obj')
-        .then(response => response.text())
-        .then(data => {
+      fetch('models/nin.obj')
+        .then((response) => response.text())
+        .then((data) => {
           const parsedObj: OBJDoc = new OBJDoc('nin.obj');
           parsedObj.parse(data, 1, true);
           const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
-          const nin: Model = new Model(drawingInfo.vertices, drawingInfo.normals, drawingInfo.indices, 10);
+          const nin: Model = new Model(
+            drawingInfo.vertices,
+            drawingInfo.normals,
+            drawingInfo.indices,
+            10,
+          );
           this.models.set(ModelChoice.NineInchNails, nin);
-        }).then(() => {
-          fetch('assets/models/rook.obj')
-            .then(response => response.text())
-            .then(data => {
+        })
+        .then(() => {
+          fetch('models/rook.obj')
+            .then((response) => response.text())
+            .then((data) => {
               const parsedObj: OBJDoc = new OBJDoc('rook.obj');
               parsedObj.parse(data, 1, true);
               const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
-              const rook: Model = new Model(drawingInfo.vertices, drawingInfo.normals, drawingInfo.indices, 1.5);
+              const rook: Model = new Model(
+                drawingInfo.vertices,
+                drawingInfo.normals,
+                drawingInfo.indices,
+                1.5,
+              );
               this.models.set(ModelChoice.ChessRook, rook);
             });
-        }).then(() => {
-          fetch('assets/models/box_hole.obj')
-            .then(response => response.text())
-            .then(data => {
+        })
+        .then(() => {
+          fetch('models/box_hole.obj')
+            .then((response) => response.text())
+            .then((data) => {
               const parsedObj: OBJDoc = new OBJDoc('box_hole.obj');
               parsedObj.parse(data, 1, true);
               const drawingInfo: DrawingInfo = parsedObj.getDrawingInfo();
-              const cube: Model = new Model(drawingInfo.vertices, drawingInfo.normals, drawingInfo.indices, 1.5);
+              const cube: Model = new Model(
+                drawingInfo.vertices,
+                drawingInfo.normals,
+                drawingInfo.indices,
+                1.5,
+              );
               this.models.set(ModelChoice.Cube, cube);
               this.start();
             });
@@ -108,28 +128,28 @@ export class AppComponent {
   }
 
   // Set up data in WebGL context, call drawArrays/drawElements
-  public start(): void {
+  public start(frame = true): void {
     const gl = this.gl;
     gl.enable(gl.DEPTH_TEST);
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BIT);
     gl.enable(gl.CULL_FACE);
     gl.cullFace(gl.BACK);
-    this.implementation.scaleCanvas();
-    const pointCount = this.implementation.loadGLData(gl);
+    if (frame) {
+      this.implementation.scaleCanvas();
+    }
+    const pointCount = this.implementation.loadGLData();
     if (pointCount <= 0) {
       return;
     }
-    if (this.logging) {
+    if (this.logging()) {
       this.implementation.logState();
     }
 
-    if (this.entityType == Constants.VERTEX) {
+    if (this.entityType() == Constants.VERTEX) {
       gl.drawArrays(gl.POINTS, 0, pointCount);
-    }
-    else {
+    } else {
       gl.drawElements(gl.TRIANGLES, pointCount, gl.UNSIGNED_SHORT, 0);
     }
   }
-
 }

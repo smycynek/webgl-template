@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 @Component({
-  selector: 'version',
+  selector: 'app-version',
   templateUrl: './version.html',
-  styles: []
+  styles: [],
 })
-export class Version {
-}
+export class Version {}

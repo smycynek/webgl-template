@@ -1,0 +1,379 @@
+<!-- eslint-disable @angular-eslint/template/label-has-associated-control -->
+<div style="text-align: left; margin: 1.5em" [attr.init]="initScreen()">
+  <h1 class="mb-4 text-4xl font-bold tracking-tight">WebGL Angular/TypeScript/Webpack Template</h1>
+  <div>
+    <a href="https://github.com/smycynek/webgl-template">
+      https://github.com/smycynek/webgl-template</a
+    >
+  </div>
+  <div>Tap image to toggle spin.</div>
+  <canvas
+    (click)="handler.toggleSpinMode()"
+    style="margin: 5px; border: 1px solid #000000"
+    id="gl_canvas"
+  ></canvas>
+
+  <details>
+    <summary>Model</summary>
+    <div style="margin-left: 10px">
+      <div>
+        <label class="radio-label">Obj file </label>
+        <input type="radio" name="rModelChoice" (click)="handler.setUploadedModel()" />
+      </div>
+      <div>
+        <label class="radio-label">Rook </label>
+        <input type="radio" name="rModelChoice" (click)="handler.setRookModel()" />
+      </div>
+      <div>
+        <label class="radio-label">NIN </label>
+        <input type="radio" name="rModelChoice" (click)="handler.setNinModel()" />
+      </div>
+      <div>
+        <label class="radio-label">Box </label>
+        <input checked type="radio" name="rModelChoice" (click)="handler.setCubeModel()" />
+      </div>
+      <div [hidden]="modelChoice !== 4">
+        <input
+          style="width: 200px"
+          (change)="handler.onFileSelected($event)"
+          type="file"
+          accept=".obj"
+          name="rFile"
+        />
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Basics</summary>
+    @if (entityType() === 'TRIANGLE') {
+      <h2>Lighting</h2>
+      <div style="margin-left: 10px">
+        <div>
+          <label class="radio-label">Direction </label>
+          <input type="radio" name="rlightingType" (click)="handler.setDirectionalLightMode()" />
+        </div>
+        <div>
+          <label class="radio-label">Point</label>
+          <input checked type="radio" name="rlightingType" (click)="handler.setPointLightMode()" />
+        </div>
+      </div>
+    }
+    <h2>Entity</h2>
+    <div style="margin-left: 10px">
+      <div>
+        <label class="radio-label"> Vertex </label>
+        <input type="radio" name="rentityType" (click)="handler.setPointMode()" />
+      </div>
+
+      <div>
+        <label class="radio-label">Triangle </label>
+        <input checked type="radio" name="rentityType" (click)="handler.setTriangleMode()" />
+      </div>
+    </div>
+    <h2>Projection</h2>
+    <div style="margin-left: 10px">
+      <div>
+        <label class="radio-label">Ortho </label>
+        <input type="radio" name="rprojectionType" (click)="handler.setOrthoMode()" />
+      </div>
+      <div>
+        <label class="radio-label">Perspective </label>
+        <input checked type="radio" name="rprojectionType" (click)="handler.setPerspectiveMode()" />
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Transform</summary>
+
+    <div style="margin-left: 10px">
+      <label class="text-label">Scale-X </label
+      ><input step="0.1" [(ngModel)]="scale.x" #ctrl="ngModel" (change)="start()" type="number" />
+      <label class="text-label">Scale-Y </label
+      ><input step="0.1" [(ngModel)]="scale.y" #ctrl="ngModel" (change)="start()" type="number" />
+      <label class="text-label">Scale-Z </label
+      ><input step="0.1" [(ngModel)]="scale.z" #ctrl="ngModel" (change)="start()" type="number" />
+    </div>
+
+    <div style="margin-left: 10px">
+      <label class="text-label">Translate-X </label
+      ><input
+        step="0.1"
+        [(ngModel)]="translate.x"
+        #ctrl="ngModel"
+        (change)="start()"
+        type="number"
+      />
+      <label class="text-label">Translate-Y </label
+      ><input
+        step="0.1"
+        [(ngModel)]="translate.y"
+        #ctrl="ngModel"
+        (change)="start()"
+        type="number"
+      />
+      <label class="text-label">Translate-Z </label
+      ><input
+        step="0.1"
+        [(ngModel)]="translate.z"
+        #ctrl="ngModel"
+        (change)="start()"
+        type="number"
+      />
+    </div>
+
+    <div style="margin-left: 10px">
+      <label class="text-label">Rotate-X </label
+      ><input
+        step="0.1"
+        [(ngModel)]="rotation.x"
+        #ctrl="ngModel"
+        (change)="start()"
+        type="number"
+      />
+      <label class="text-label">Rotate-Y </label
+      ><input
+        step="0.1"
+        [(ngModel)]="rotation.y"
+        #ctrl="ngModel"
+        (change)="start()"
+        type="number"
+      />
+      <label class="text-label">Rotate-Z</label>
+      <input step="0.1" [(ngModel)]="rotation.z" #ctrl="ngModel" (change)="start()" type="number" />
+    </div>
+  </details>
+
+  <details>
+    <summary>Camera</summary>
+    <h2>Orthographic</h2>
+    <div style="margin-left: 10px">
+      <div>
+        <label class="text-label">Left</label
+        ><input
+          [disabled]="projectionType() === 'PERSPECTIVE'"
+          width="2em"
+          step="0.1"
+          [(ngModel)]="ortho.left"
+          #ctrl="ngModel"
+          (change)="start()"
+          type="number"
+        />
+
+        <label class="text-label">Right</label
+        ><input
+          [disabled]="projectionType() === 'PERSPECTIVE'"
+          step="0.1"
+          [(ngModel)]="ortho.right"
+          #ctrl="ngModel"
+          (change)="start()"
+          type="number"
+        />
+      </div>
+      <div>
+        <label class="text-label">Bottom </label
+        ><input
+          [disabled]="projectionType() === 'PERSPECTIVE'"
+          step="0.1"
+          [(ngModel)]="ortho.bottom"
+          #ctrl="ngModel"
+          (change)="start()"
+          type="number"
+        />
+
+        <label class="text-label">Top</label
+        ><input
+          [disabled]="projectionType() === 'PERSPECTIVE'"
+          step="0.1"
+          [(ngModel)]="ortho.top"
+          #ctrl="ngModel"
+          (change)="start()"
+          type="number"
+        />
+      </div>
+
+      <div>
+        <label class="text-label">Near</label
+        ><input
+          [disabled]="projectionType() === 'PERSPECTIVE'"
+          step="0.1"
+          [(ngModel)]="ortho.near"
+          #ctrl="ngModel"
+          (change)="start()"
+          type="number"
+        />
+
+        <label class="text-label">Far </label
+        ><input
+          [disabled]="projectionType() === 'PERSPECTIVE'"
+          step="0.1"
+          [(ngModel)]="ortho.far"
+          #ctrl="ngModel"
+          (change)="start()"
+          type="number"
+        />
+      </div>
+      <h2>Perspective</h2>
+      <div>
+        <label class="text-label">Angle </label
+        ><input
+          [disabled]="projectionType() === 'ORTHO'"
+          step="0.1"
+          [(ngModel)]="perspective.fieldOfView"
+          #ctrl="ngModel"
+          (change)="start()"
+          type="number"
+        />
+
+        <label class="text-label">Aspect </label
+        ><input
+          [disabled]="projectionType() === 'ORTHO'"
+          step="0.1"
+          [(ngModel)]="perspective.aspectRatio"
+          #ctrl="ngModel"
+          (change)="start()"
+          type="number"
+        />
+      </div>
+      <div>
+        <label class="text-label">Near</label
+        ><input
+          [disabled]="projectionType() === 'ORTHO'"
+          step="0.1"
+          [(ngModel)]="perspective.near"
+          #ctrl="ngModel"
+          (change)="start()"
+          type="number"
+        />
+
+        <label class="text-label">Far </label
+        ><input
+          [disabled]="projectionType() === 'ORTHO'"
+          step="0.1"
+          [(ngModel)]="perspective.far"
+          #ctrl="ngModel"
+          (change)="start()"
+          type="number"
+        />
+      </div>
+      <h2>View</h2>
+
+      <div>
+        <label class="text-label">Up-X</label
+        ><input step="0.1" [(ngModel)]="up.x" #ctrl="ngModel" (change)="start()" type="number" />
+
+        <label class="text-label">Up-Y</label
+        ><input step="0.1" [(ngModel)]="up.y" #ctrl="ngModel" (change)="start()" type="number" />
+
+        <label class="text-label">Up-Z</label
+        ><input step="0.1" [(ngModel)]="up.z" #ctrl="ngModel" (change)="start()" type="number" />
+      </div>
+      <div>
+        <label class="text-label">Eye-X</label
+        ><input step="0.1" [(ngModel)]="eye().x" #ctrl="ngModel" (change)="start()" type="number" />
+
+        <label class="text-label">Eye-Y</label
+        ><input step="0.1" [(ngModel)]="eye().y" #ctrl="ngModel" (change)="start()" type="number" />
+
+        <label class="text-label">Eye-Z</label
+        ><input step="0.1" [(ngModel)]="eye().z" #ctrl="ngModel" (change)="start()" type="number" />
+      </div>
+      <div>
+        <label class="text-label">Look-X</label
+        ><input step="0.1" [(ngModel)]="look.x" #ctrl="ngModel" (change)="start()" type="number" />
+
+        <label class="text-label">Look-Y</label
+        ><input step="0.1" [(ngModel)]="look.y" #ctrl="ngModel" (change)="start()" type="number" />
+
+        <label class="text-label">Look-Z</label
+        ><input step="0.1" [(ngModel)]="look.z" #ctrl="ngModel" (change)="start()" type="number" />
+      </div>
+    </div>
+  </details>
+  @if (entityType() === 'TRIANGLE') {
+    <details>
+      <summary>Lighting</summary>
+
+      <div style="margin-left: 10px">
+        <label class="text-label">Directional-X </label
+        ><input
+          [disabled]="lightingType() === 'POINT_LIGHT'"
+          step="0.1"
+          [(ngModel)]="directionalLight.x"
+          #ctrl="ngModel"
+          (change)="start()"
+          type="number"
+        />
+
+        <label class="text-label">Directional-Y </label
+        ><input
+          [disabled]="lightingType() === 'POINT_LIGHT'"
+          step="0.1"
+          [(ngModel)]="directionalLight.z"
+          #ctrl="ngModel"
+          (change)="start()"
+          type="number"
+        />
+
+        <label class="text-label">Directional-Z </label
+        ><input
+          [disabled]="lightingType() === 'POINT_LIGHT'"
+          step="0.1"
+          [(ngModel)]="directionalLight.z"
+          #ctrl="ngModel"
+          (change)="start()"
+          type="number"
+        />
+      </div>
+
+      <div style="margin-left: 10px">
+        <label class="text-label">Point-X </label
+        ><input
+          [disabled]="lightingType() === 'DIRECTIONAL_LIGHT'"
+          step="0.1"
+          [(ngModel)]="pointLight.x"
+          #ctrl="ngModel"
+          (change)="start()"
+          type="number"
+        />
+
+        <label class="text-label">Point-Y</label
+        ><input
+          [disabled]="lightingType() === 'DIRECTIONAL_LIGHT'"
+          step="0.1"
+          [(ngModel)]="pointLight.y"
+          #ctrl="ngModel"
+          (change)="start()"
+          type="number"
+        />
+
+        <label class="text-label">Point-Z </label
+        ><input
+          [disabled]="lightingType() === 'DIRECTIONAL_LIGHT'"
+          step="0.1"
+          [(ngModel)]="pointLight.z"
+          #ctrl="ngModel"
+          (change)="start()"
+          type="number"
+        />
+      </div>
+    </details>
+  }
+
+  @if (entityType() === 'VERTEX') {
+    <details>
+      <summary>Vertices</summary>
+      <div style="margin-left: 10px">
+        <div>
+          <label class="radio-label"> Fancy </label>
+          <input checked type="radio" name="rPointStyle" (click)="handler.setFancyPointsMode()" />
+        </div>
+        <div>
+          <label class="radio-label"> Simple </label>
+          <input type="radio" name="rPointStyle" (click)="handler.setSimplePointsMode()" />
+        </div>
+      </div>
+    </details>
+  }
+</div>
