@@ -1,12 +1,12 @@
-import { AppComponent } from './app.component';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { App } from './app';
 import { Constants, PointStyle } from './constants';
 import { GlUtil } from './lib/glUtil';
 import { Matrix4 } from './lib/math';
 
 // Used by the main Angular AppComponent for lower-level functionality
 export class Implementation {
-  constructor(public app: AppComponent) {
-  }
+  constructor(public app: App) {}
   public getContext(): any | null {
     let gl;
 
@@ -18,13 +18,12 @@ export class Implementation {
     }
     if (canvas instanceof HTMLCanvasElement) {
       // Get the rendering context for WebGL
-      gl = canvas.getContext('webgl');
+      gl = canvas.getContext('webgl2');
       if (!gl) {
         console.log('Failed to get the rendering context for WebGL');
         return null;
       }
-    }
-    else {
+    } else {
       console.log('Canvas is wrong type');
       return null;
     }
@@ -33,7 +32,7 @@ export class Implementation {
 
   private setupProjection(): Matrix4 {
     const projMatrix = new Matrix4();
-    if (this.app.projectionType == Constants.ORTHO) {
+    if (this.app.projectionType() == Constants.ORTHO) {
       projMatrix.setOrtho(
         this.app.ortho.left,
         this.app.ortho.right,
@@ -42,8 +41,7 @@ export class Implementation {
         this.app.ortho.near,
         this.app.ortho.far,
       );
-    }
-    else {
+    } else {
       projMatrix.setPerspective(
         this.app.perspective.fieldOfView,
         this.app.perspective.aspectRatio,
@@ -57,18 +55,17 @@ export class Implementation {
   private setupView() {
     const viewMatrix: Matrix4 = new Matrix4();
     viewMatrix.setLookAt(
-      this.app.eye.x,
-      this.app.eye.y,
-      this.app.eye.z,
+      this.app.eye().x,
+      this.app.eye().y,
+      this.app.eye().z,
       this.app.look.x,
       this.app.look.y,
       this.app.look.z,
       this.app.up.x,
       this.app.up.y,
-      this.app.up.z
+      this.app.up.z,
     );
     return viewMatrix;
-
   }
 
   private setupRotation(): Matrix4 {
@@ -82,18 +79,16 @@ export class Implementation {
   private setupTranslation(): Matrix4 {
     const translationMatrix = new Matrix4();
     translationMatrix.setTranslate(
-      this.app.translate.x, this.app.translate.y, this.app.translate.z
+      this.app.translate.x,
+      this.app.translate.y,
+      this.app.translate.z,
     );
     return translationMatrix;
   }
 
   private setupScale(): Matrix4 {
     const scaleMatrix = new Matrix4();
-    scaleMatrix.setScale(
-      this.app.scale.x,
-      this.app.scale.y,
-      this.app.scale.z
-    );
+    scaleMatrix.setScale(this.app.scale.x, this.app.scale.y, this.app.scale.z);
     return scaleMatrix;
   }
 
@@ -129,13 +124,19 @@ export class Implementation {
       throw new Error('No index buffer');
     }
     this.app.gl.bindBuffer(this.app.gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    this.app.gl.bufferData(this.app.gl.ELEMENT_ARRAY_BUFFER, model.indices, this.app.gl.STATIC_DRAW);
+    this.app.gl.bufferData(
+      this.app.gl.ELEMENT_ARRAY_BUFFER,
+      model.indices,
+      this.app.gl.STATIC_DRAW,
+    );
     return model.indices.length;
   }
 
   private setupGeometryBuffer(model: any): void {
-    if (!GlUtil.initArrayBuffer(this.app.gl, 'a_Position', model.vertices, 3, this.app.gl.FLOAT)) throw new Error('cannot init a_Position');
-    if (!GlUtil.initArrayBuffer(this.app.gl, 'a_Normal', model.normals, 3, this.app.gl.FLOAT)) throw new Error('cannot init a_Normal');
+    if (!GlUtil.initArrayBuffer(this.app.gl, 'a_Position', model.vertices, 3, this.app.gl.FLOAT))
+      throw new Error('cannot init a_Position');
+    if (!GlUtil.initArrayBuffer(this.app.gl, 'a_Normal', model.normals, 3, this.app.gl.FLOAT))
+      throw new Error('cannot init a_Normal');
   }
 
   private setupTransforms(): void {
@@ -145,7 +146,9 @@ export class Implementation {
     const u_ProjMatrix = this.getUniformLocation('u_ProjMatrix');
     this.app.gl.uniformMatrix4fv(u_ViewMatrix, false, this.setupView().elements);
 
-    const modelMatrix = this.setupTranslation().concat(this.setupRotation()).concat(this.setupScale());
+    const modelMatrix = this.setupTranslation()
+      .concat(this.setupRotation())
+      .concat(this.setupScale());
     const normalMatrix = new Matrix4();
     normalMatrix.setInverseOf(modelMatrix);
     normalMatrix.transpose();
@@ -162,15 +165,25 @@ export class Implementation {
     const u_LightDirection = this.getUniformLocation('u_LightDirection');
     const u_LightPosition = this.getUniformLocation('u_LightPosition');
 
-    if (this.app.lightingType == Constants.DIRECTIONAL_LIGHT) {
+    if (this.app.lightingType() == Constants.DIRECTIONAL_LIGHT) {
       this.app.gl.uniform1i(u_UseDirectionalLight, true);
     } else {
       this.app.gl.uniform1i(u_UseDirectionalLight, false);
     }
 
     this.app.gl.uniform3fv(u_LightColor, Constants.lightColor.elements);
-    this.app.gl.uniform3f(u_LightDirection, this.app.directionalLight.x, this.app.directionalLight.y, this.app.directionalLight.z);
-    this.app.gl.uniform3f(u_LightPosition, this.app.pointLight.x, this.app.pointLight.y, this.app.pointLight.z);
+    this.app.gl.uniform3f(
+      u_LightDirection,
+      this.app.directionalLight.x,
+      this.app.directionalLight.y,
+      this.app.directionalLight.z,
+    );
+    this.app.gl.uniform3f(
+      u_LightPosition,
+      this.app.pointLight.x,
+      this.app.pointLight.y,
+      this.app.pointLight.z,
+    );
     this.app.gl.vertexAttrib4fv(a_TriangleColor, Constants.triangleColor.elements);
   }
 
@@ -181,7 +194,7 @@ export class Implementation {
     const u_UseStaticColor = this.getUniformLocation('u_UseStaticColor');
     const u_FancyPoints = this.getUniformLocation('u_FancyPoints');
 
-    if (this.app.entityType == Constants.VERTEX) {
+    if (this.app.entityType() == Constants.VERTEX) {
       this.app.gl.uniform1i(u_UseStaticColor, true); // If rendering points, render single color
 
       if (this.app.pointStyleChoice == PointStyle.Fancy) {
@@ -189,14 +202,12 @@ export class Implementation {
       } else {
         this.app.gl.uniform1i(u_FancyPoints, false);
       }
-    }
-    else {
+    } else {
       this.app.gl.uniform1i(u_UseStaticColor, false); // Otherwise, each fragment/face gets its own color
     }
     this.app.gl.uniform4fv(u_PointColor1, Constants.pointColor1.elements);
     this.app.gl.uniform4fv(u_PointColor2, Constants.pointColor2.elements);
     this.app.gl.vertexAttrib1f(a_PointSize, Constants.pointSize);
-
   }
   private getCanvas(): HTMLElement | null {
     const canvas: HTMLElement | null = document.getElementById('gl_canvas');
@@ -211,24 +222,24 @@ export class Implementation {
     if (this.app.gl) {
       const devicePixelRatio = window.devicePixelRatio || 1;
       console.log(`devicePixelRation: ${devicePixelRatio}`);
-      if ((this.app.gl.canvas.width !== this.app.gl.canvas.clientWidth) || (this.app.gl.canvas.height !== this.app.gl.canvas.clientHeight)) {
-        console.log(`scaleCanvas: canvas.width ${this.app.gl.canvas.width}, canvas.height ${this.app.gl.canvas.height}, canvas.clientWidth ${this.app.gl.canvas.clientWidth}, canvas.clientHeight ${this.app.gl.canvas.clientHeight} `);
-        this.app.gl.canvas.width = this.app.gl.canvas.clientWidth * devicePixelRatio;
-        this.app.gl.canvas.height = this.app.gl.canvas.clientHeight * devicePixelRatio;
-      }
-      this.app.gl.viewport(0, 0, this.app.gl.canvas.width, this.app.gl.canvas.height);
+      console.log(
+        `scaleCanvas: canvas.width ${this.app.gl.canvas.width}, canvas.height ${this.app.gl.canvas.width}, canvas.clientWidth ${this.app.gl.canvas.clientWidth}, canvas.clientHeight ${this.app.gl.canvas.clientWidth} `,
+      );
+      this.app.gl.canvas.width = this.app.gl.canvas.clientWidth * devicePixelRatio * 0.5;
+      this.app.gl.canvas.height = this.app.gl.canvas.clientWidth * devicePixelRatio * 0.5;
     }
+    this.app.gl.viewport(0, 0, this.app.gl.canvas.width, this.app.gl.canvas.width);
   }
 
   public logState(): void {
-    console.log(this.app.projectionType);
+    console.log(this.app.projectionType());
     console.log(this.app.entityType);
-    console.log(this.app.lightingType);
+    console.log(this.app.lightingType());
     Constants.print();
   }
 
   // Main method:  Bind vertex and other buffers, set up transforms, lighting, shading, and point styles
-  public loadGLData(gl: any): number {
+  public loadGLData(): number {
     const model = this.app.models.get(this.app.modelChoice);
     if (!model) {
       return 0; // model not loaded yet

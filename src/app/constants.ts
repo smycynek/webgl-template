@@ -25,7 +25,6 @@ export class Constants {
   public static readonly pointSize = 6.0;
   public static readonly triangleColor: Vector4 = new Vector4([1, 1, 1, 1]);
 
-
   public static toString(): string {
     const data = `
 ---Static/Constant data------

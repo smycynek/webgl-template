@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Adjusted for Typescript
 
 // Adapted from cuon-utils.js (c) 2012 kanda and matsuda
@@ -14,8 +15,14 @@ export class GlUtil {
     return true;
   }
 
-  public static initArrayBuffer(gl: any, attribute: string, data: Float32Array, num: number, type: any): boolean {
-  // Create a buffer object
+  public static initArrayBuffer(
+    gl: any,
+    attribute: string,
+    data: Float32Array,
+    num: number,
+    type: any,
+  ): boolean {
+    // Create a buffer object
     const buffer = gl.createBuffer();
     if (!buffer) {
       console.log('Failed to create the buffer object');
@@ -52,7 +59,7 @@ export class GlUtil {
    * @param fshader a fragment shader program (string)
    * @return created program object, or null if the creation has failed
    */
-  public static createProgram(gl: any, vshader: string, fshader: string) : any | null {
+  public static createProgram(gl: any, vshader: string, fshader: string): WebGLProgram | null {
     // Create shader object
     const vertexShader = GlUtil.loadShader(gl, gl.VERTEX_SHADER, vshader);
     const fragmentShader = GlUtil.loadShader(gl, gl.FRAGMENT_SHADER, fshader);

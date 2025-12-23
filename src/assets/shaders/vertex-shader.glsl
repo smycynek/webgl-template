@@ -1,17 +1,18 @@
-attribute vec4 a_TriangleColor;
-attribute vec4 a_Normal;   // Normal is hard coded
+#version 300 es
+in vec4 a_TriangleColor;
+in vec4 a_Normal;   // Normal is hard coded
 uniform vec3 u_LightColor;
 uniform vec3 u_LightDirection;
 uniform vec3 u_LightPosition;
 uniform bool u_UseDirectionalLight;
 uniform bool u_FancyPoints;
-attribute vec4 a_Position;
+in vec4 a_Position;
 uniform mat4 u_ViewMatrix;
 uniform mat4 u_ProjMatrix;
 uniform mat4 u_ModelMatrix;
 uniform mat4 u_NormalMatrix;
-attribute float a_PointSize;   // Only used in point rendering
-varying vec4 v_Color;  // Fragment color
+in float a_PointSize;   // Only used in point rendering
+out vec4 v_Color;  // Fragment color
 void main() {
 
     // Rotate the normals along with the model (using the special normal matrix), as they are provided in advance and not

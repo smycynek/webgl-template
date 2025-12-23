@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Adjusted for Typescript
 
 // Adapted from cuon-matrix.js (c) 2012 kanda and matsuda
@@ -31,12 +32,24 @@ export class Matrix4 {
     }
   }
 
-  public setIdentity (): Matrix4 {
+  public setIdentity(): Matrix4 {
     const e = this.elements;
-    e[0] = 1; e[4] = 0; e[8] = 0; e[12] = 0;
-    e[1] = 0; e[5] = 1; e[9] = 0; e[13] = 0;
-    e[2] = 0; e[6] = 0; e[10] = 1; e[14] = 0;
-    e[3] = 0; e[7] = 0; e[11] = 0; e[15] = 1;
+    e[0] = 1;
+    e[4] = 0;
+    e[8] = 0;
+    e[12] = 0;
+    e[1] = 0;
+    e[5] = 1;
+    e[9] = 0;
+    e[13] = 0;
+    e[2] = 0;
+    e[6] = 0;
+    e[10] = 1;
+    e[14] = 0;
+    e[3] = 0;
+    e[7] = 0;
+    e[11] = 0;
+    e[15] = 1;
     return this;
   }
 
@@ -84,7 +97,10 @@ export class Matrix4 {
     }
 
     for (i = 0; i < 4; i++) {
-      ai0 = a[i]; ai1 = a[i + 4]; ai2 = a[i + 8]; ai3 = a[i + 12];
+      ai0 = a[i];
+      ai1 = a[i + 4];
+      ai2 = a[i + 8];
+      ai3 = a[i + 12];
       e[i] = ai0 * b[0] + ai1 * b[1] + ai2 * b[2] + ai3 * b[3];
       e[i + 4] = ai0 * b[4] + ai1 * b[5] + ai2 * b[6] + ai3 * b[7];
       e[i + 8] = ai0 * b[8] + ai1 * b[9] + ai2 * b[10] + ai3 * b[11];
@@ -99,7 +115,7 @@ export class Matrix4 {
    * @param pos  The multiply vector
    * @return The result of multiplication(Float32Array)
    */
-  public multiplyVector3 (pos: Vector3): Vector3 {
+  public multiplyVector3(pos: Vector3): Vector3 {
     const e = this.elements;
     const p = pos.elements;
     const v = new Vector3();
@@ -117,7 +133,7 @@ export class Matrix4 {
    * @param pos  The multiply vector
    * @return The result of multiplication(Float32Array)
    */
-  public multiplyVector4 (pos:Vector4): Vector4 {
+  public multiplyVector4(pos: Vector4): Vector4 {
     const e = this.elements;
     const p = pos.elements;
     const v = new Vector4();
@@ -135,17 +151,29 @@ export class Matrix4 {
    * Transpose the matrix.
    * @return this
    */
-  public transpose (): Matrix4 {
+  public transpose(): Matrix4 {
     let t: number;
 
     const e = this.elements;
 
-    t = e[1]; e[1] = e[4]; e[4] = t;
-    t = e[2]; e[2] = e[8]; e[8] = t;
-    t = e[3]; e[3] = e[12]; e[12] = t;
-    t = e[6]; e[6] = e[9]; e[9] = t;
-    t = e[7]; e[7] = e[13]; e[13] = t;
-    t = e[11]; e[11] = e[14]; e[14] = t;
+    t = e[1];
+    e[1] = e[4];
+    e[4] = t;
+    t = e[2];
+    e[2] = e[8];
+    e[8] = t;
+    t = e[3];
+    e[3] = e[12];
+    e[12] = t;
+    t = e[6];
+    e[6] = e[9];
+    e[9] = t;
+    t = e[7];
+    e[7] = e[13];
+    e[13] = t;
+    t = e[11];
+    e[11] = e[14];
+    e[14] = t;
 
     return this;
   }
@@ -155,48 +183,128 @@ export class Matrix4 {
    * @param other The source matrix
    * @return this
    */
-  public setInverseOf (other: Matrix4): Matrix4 {
+  public setInverseOf(other: Matrix4): Matrix4 {
     let i, det;
 
     const s = other.elements;
     const d = this.elements;
     const inv = new Float32Array(16);
 
-    inv[0] = s[5] * s[10] * s[15] - s[5] * s[11] * s[14] - s[9] * s[6] * s[15]
-      + s[9] * s[7] * s[14] + s[13] * s[6] * s[11] - s[13] * s[7] * s[10];
-    inv[4] = - s[4] * s[10] * s[15] + s[4] * s[11] * s[14] + s[8] * s[6] * s[15]
-      - s[8] * s[7] * s[14] - s[12] * s[6] * s[11] + s[12] * s[7] * s[10];
-    inv[8] = s[4] * s[9] * s[15] - s[4] * s[11] * s[13] - s[8] * s[5] * s[15]
-      + s[8] * s[7] * s[13] + s[12] * s[5] * s[11] - s[12] * s[7] * s[9];
-    inv[12] = - s[4] * s[9] * s[14] + s[4] * s[10] * s[13] + s[8] * s[5] * s[14]
-      - s[8] * s[6] * s[13] - s[12] * s[5] * s[10] + s[12] * s[6] * s[9];
+    inv[0] =
+      s[5] * s[10] * s[15] -
+      s[5] * s[11] * s[14] -
+      s[9] * s[6] * s[15] +
+      s[9] * s[7] * s[14] +
+      s[13] * s[6] * s[11] -
+      s[13] * s[7] * s[10];
+    inv[4] =
+      -s[4] * s[10] * s[15] +
+      s[4] * s[11] * s[14] +
+      s[8] * s[6] * s[15] -
+      s[8] * s[7] * s[14] -
+      s[12] * s[6] * s[11] +
+      s[12] * s[7] * s[10];
+    inv[8] =
+      s[4] * s[9] * s[15] -
+      s[4] * s[11] * s[13] -
+      s[8] * s[5] * s[15] +
+      s[8] * s[7] * s[13] +
+      s[12] * s[5] * s[11] -
+      s[12] * s[7] * s[9];
+    inv[12] =
+      -s[4] * s[9] * s[14] +
+      s[4] * s[10] * s[13] +
+      s[8] * s[5] * s[14] -
+      s[8] * s[6] * s[13] -
+      s[12] * s[5] * s[10] +
+      s[12] * s[6] * s[9];
 
-    inv[1] = - s[1] * s[10] * s[15] + s[1] * s[11] * s[14] + s[9] * s[2] * s[15]
-      - s[9] * s[3] * s[14] - s[13] * s[2] * s[11] + s[13] * s[3] * s[10];
-    inv[5] = s[0] * s[10] * s[15] - s[0] * s[11] * s[14] - s[8] * s[2] * s[15]
-      + s[8] * s[3] * s[14] + s[12] * s[2] * s[11] - s[12] * s[3] * s[10];
-    inv[9] = - s[0] * s[9] * s[15] + s[0] * s[11] * s[13] + s[8] * s[1] * s[15]
-      - s[8] * s[3] * s[13] - s[12] * s[1] * s[11] + s[12] * s[3] * s[9];
-    inv[13] = s[0] * s[9] * s[14] - s[0] * s[10] * s[13] - s[8] * s[1] * s[14]
-      + s[8] * s[2] * s[13] + s[12] * s[1] * s[10] - s[12] * s[2] * s[9];
+    inv[1] =
+      -s[1] * s[10] * s[15] +
+      s[1] * s[11] * s[14] +
+      s[9] * s[2] * s[15] -
+      s[9] * s[3] * s[14] -
+      s[13] * s[2] * s[11] +
+      s[13] * s[3] * s[10];
+    inv[5] =
+      s[0] * s[10] * s[15] -
+      s[0] * s[11] * s[14] -
+      s[8] * s[2] * s[15] +
+      s[8] * s[3] * s[14] +
+      s[12] * s[2] * s[11] -
+      s[12] * s[3] * s[10];
+    inv[9] =
+      -s[0] * s[9] * s[15] +
+      s[0] * s[11] * s[13] +
+      s[8] * s[1] * s[15] -
+      s[8] * s[3] * s[13] -
+      s[12] * s[1] * s[11] +
+      s[12] * s[3] * s[9];
+    inv[13] =
+      s[0] * s[9] * s[14] -
+      s[0] * s[10] * s[13] -
+      s[8] * s[1] * s[14] +
+      s[8] * s[2] * s[13] +
+      s[12] * s[1] * s[10] -
+      s[12] * s[2] * s[9];
 
-    inv[2] = s[1] * s[6] * s[15] - s[1] * s[7] * s[14] - s[5] * s[2] * s[15]
-      + s[5] * s[3] * s[14] + s[13] * s[2] * s[7] - s[13] * s[3] * s[6];
-    inv[6] = - s[0] * s[6] * s[15] + s[0] * s[7] * s[14] + s[4] * s[2] * s[15]
-      - s[4] * s[3] * s[14] - s[12] * s[2] * s[7] + s[12] * s[3] * s[6];
-    inv[10] = s[0] * s[5] * s[15] - s[0] * s[7] * s[13] - s[4] * s[1] * s[15]
-      + s[4] * s[3] * s[13] + s[12] * s[1] * s[7] - s[12] * s[3] * s[5];
-    inv[14] = - s[0] * s[5] * s[14] + s[0] * s[6] * s[13] + s[4] * s[1] * s[14]
-      - s[4] * s[2] * s[13] - s[12] * s[1] * s[6] + s[12] * s[2] * s[5];
+    inv[2] =
+      s[1] * s[6] * s[15] -
+      s[1] * s[7] * s[14] -
+      s[5] * s[2] * s[15] +
+      s[5] * s[3] * s[14] +
+      s[13] * s[2] * s[7] -
+      s[13] * s[3] * s[6];
+    inv[6] =
+      -s[0] * s[6] * s[15] +
+      s[0] * s[7] * s[14] +
+      s[4] * s[2] * s[15] -
+      s[4] * s[3] * s[14] -
+      s[12] * s[2] * s[7] +
+      s[12] * s[3] * s[6];
+    inv[10] =
+      s[0] * s[5] * s[15] -
+      s[0] * s[7] * s[13] -
+      s[4] * s[1] * s[15] +
+      s[4] * s[3] * s[13] +
+      s[12] * s[1] * s[7] -
+      s[12] * s[3] * s[5];
+    inv[14] =
+      -s[0] * s[5] * s[14] +
+      s[0] * s[6] * s[13] +
+      s[4] * s[1] * s[14] -
+      s[4] * s[2] * s[13] -
+      s[12] * s[1] * s[6] +
+      s[12] * s[2] * s[5];
 
-    inv[3] = - s[1] * s[6] * s[11] + s[1] * s[7] * s[10] + s[5] * s[2] * s[11]
-      - s[5] * s[3] * s[10] - s[9] * s[2] * s[7] + s[9] * s[3] * s[6];
-    inv[7] = s[0] * s[6] * s[11] - s[0] * s[7] * s[10] - s[4] * s[2] * s[11]
-      + s[4] * s[3] * s[10] + s[8] * s[2] * s[7] - s[8] * s[3] * s[6];
-    inv[11] = - s[0] * s[5] * s[11] + s[0] * s[7] * s[9] + s[4] * s[1] * s[11]
-      - s[4] * s[3] * s[9] - s[8] * s[1] * s[7] + s[8] * s[3] * s[5];
-    inv[15] = s[0] * s[5] * s[10] - s[0] * s[6] * s[9] - s[4] * s[1] * s[10]
-      + s[4] * s[2] * s[9] + s[8] * s[1] * s[6] - s[8] * s[2] * s[5];
+    inv[3] =
+      -s[1] * s[6] * s[11] +
+      s[1] * s[7] * s[10] +
+      s[5] * s[2] * s[11] -
+      s[5] * s[3] * s[10] -
+      s[9] * s[2] * s[7] +
+      s[9] * s[3] * s[6];
+    inv[7] =
+      s[0] * s[6] * s[11] -
+      s[0] * s[7] * s[10] -
+      s[4] * s[2] * s[11] +
+      s[4] * s[3] * s[10] +
+      s[8] * s[2] * s[7] -
+      s[8] * s[3] * s[6];
+    inv[11] =
+      -s[0] * s[5] * s[11] +
+      s[0] * s[7] * s[9] +
+      s[4] * s[1] * s[11] -
+      s[4] * s[3] * s[9] -
+      s[8] * s[1] * s[7] +
+      s[8] * s[3] * s[5];
+    inv[15] =
+      s[0] * s[5] * s[10] -
+      s[0] * s[6] * s[9] -
+      s[4] * s[1] * s[10] +
+      s[4] * s[2] * s[9] +
+      s[8] * s[1] * s[6] -
+      s[8] * s[2] * s[5];
 
     det = s[0] * inv[0] + s[1] * inv[4] + s[2] * inv[8] + s[3] * inv[12];
     if (det === 0) {
@@ -215,7 +323,7 @@ export class Matrix4 {
    * Calculate the inverse matrix of this, and set to this.
    * @return this
    */
-  public invert (): Matrix4 {
+  public invert(): Matrix4 {
     return this.setInverseOf(this);
   }
 
@@ -229,8 +337,14 @@ export class Matrix4 {
    * @param far The distances to the farther depth clipping plane. This value is minus if the plane is to be behind the viewer.
    * @return this
    */
-  public setOrtho(left: number, right: number, bottom: number, top: number, near: number, far: number): Matrix4 {
-
+  public setOrtho(
+    left: number,
+    right: number,
+    bottom: number,
+    top: number,
+    near: number,
+    far: number,
+  ): Matrix4 {
     if (left === right || bottom === top || near === far) {
       throw 'null frustum';
     }
@@ -274,7 +388,14 @@ export class Matrix4 {
    * @param far The distances to the farther depth clipping plane. This value is minus if the plane is to be behind the viewer.
    * @return this
    */
-  public ortho(left: number, right: number, bottom: number, top: number, near: number, far: number): Matrix4 {
+  public ortho(
+    left: number,
+    right: number,
+    bottom: number,
+    top: number,
+    near: number,
+    far: number,
+  ): Matrix4 {
     return this.concat(new Matrix4().setOrtho(left, right, bottom, top, near, far));
   }
 
@@ -288,7 +409,14 @@ export class Matrix4 {
    * @param far The distances to the farther depth clipping plane. This value must be plus value.
    * @return this
    */
-  public setFrustum(left: number, right: number, bottom: number, top: number, near: number, far: number): Matrix4{
+  public setFrustum(
+    left: number,
+    right: number,
+    bottom: number,
+    top: number,
+    near: number,
+    far: number,
+  ): Matrix4 {
     if (left === right || top === bottom || near === far) {
       throw 'null frustum';
     }
@@ -338,7 +466,14 @@ export class Matrix4 {
    * @param far The distances to the farther depth clipping plane. This value must be plus value.
    * @return this
    */
-  public frustum(left: number, right: number, bottom: number, top: number, near: number, far: number): Matrix4 {
+  public frustum(
+    left: number,
+    right: number,
+    bottom: number,
+    top: number,
+    near: number,
+    far: number,
+  ): Matrix4 {
     return this.concat(new Matrix4().setFrustum(left, right, bottom, top, near, far));
   }
 
@@ -350,7 +485,7 @@ export class Matrix4 {
    * @param far The distances to the farther depth clipping plane. This value must be plus value.
    * @return this
    */
-  public setPerspective (fovy: number, aspect: number, near: number, far: number): Matrix4 {
+  public setPerspective(fovy: number, aspect: number, near: number, far: number): Matrix4 {
     if (near === far || aspect === 0) {
       throw 'null frustum';
     }
@@ -361,7 +496,7 @@ export class Matrix4 {
       throw 'far <= 0';
     }
 
-    fovy = Math.PI * fovy / 180 / 2;
+    fovy = (Math.PI * fovy) / 180 / 2;
     const s = Math.sin(fovy);
     if (s === 0) {
       throw 'null frustum';
@@ -403,7 +538,7 @@ export class Matrix4 {
    * @param far The distances to the farther depth clipping plane. This value must be plus value.
    * @return this
    */
-  public perspective (fovy: number, aspect: number, near: number, far: number): Matrix4 {
+  public perspective(fovy: number, aspect: number, near: number, far: number): Matrix4 {
     return this.concat(new Matrix4().setPerspective(fovy, aspect, near, far));
   }
 
@@ -414,12 +549,24 @@ export class Matrix4 {
    * @param z The scale factor along the Z axis
    * @return this
    */
-  public setScale  (x: number, y: number, z: number) : Matrix4 {
+  public setScale(x: number, y: number, z: number): Matrix4 {
     const e = this.elements;
-    e[0] = x; e[4] = 0; e[8] = 0; e[12] = 0;
-    e[1] = 0; e[5] = y; e[9] = 0; e[13] = 0;
-    e[2] = 0; e[6] = 0; e[10] = z; e[14] = 0;
-    e[3] = 0; e[7] = 0; e[11] = 0; e[15] = 1;
+    e[0] = x;
+    e[4] = 0;
+    e[8] = 0;
+    e[12] = 0;
+    e[1] = 0;
+    e[5] = y;
+    e[9] = 0;
+    e[13] = 0;
+    e[2] = 0;
+    e[6] = 0;
+    e[10] = z;
+    e[14] = 0;
+    e[3] = 0;
+    e[7] = 0;
+    e[11] = 0;
+    e[15] = 1;
     return this;
   }
 
@@ -430,12 +577,20 @@ export class Matrix4 {
    * @param z The scale factor along the Z axis
    * @return this
    */
-  public scale (x: number, y: number, z: number) : Matrix4 {
+  public scale(x: number, y: number, z: number): Matrix4 {
     const e = this.elements;
-    e[0] *= x; e[4] *= y; e[8] *= z;
-    e[1] *= x; e[5] *= y; e[9] *= z;
-    e[2] *= x; e[6] *= y; e[10] *= z;
-    e[3] *= x; e[7] *= y; e[11] *= z;
+    e[0] *= x;
+    e[4] *= y;
+    e[8] *= z;
+    e[1] *= x;
+    e[5] *= y;
+    e[9] *= z;
+    e[2] *= x;
+    e[6] *= y;
+    e[10] *= z;
+    e[3] *= x;
+    e[7] *= y;
+    e[11] *= z;
     return this;
   }
 
@@ -446,12 +601,24 @@ export class Matrix4 {
    * @param z The Z value of a translation.
    * @return this
    */
-  public setTranslate (x: number, y: number, z: number) : Matrix4 {
+  public setTranslate(x: number, y: number, z: number): Matrix4 {
     const e = this.elements;
-    e[0] = 1; e[4] = 0; e[8] = 0; e[12] = x;
-    e[1] = 0; e[5] = 1; e[9] = 0; e[13] = y;
-    e[2] = 0; e[6] = 0; e[10] = 1; e[14] = z;
-    e[3] = 0; e[7] = 0; e[11] = 0; e[15] = 1;
+    e[0] = 1;
+    e[4] = 0;
+    e[8] = 0;
+    e[12] = x;
+    e[1] = 0;
+    e[5] = 1;
+    e[9] = 0;
+    e[13] = y;
+    e[2] = 0;
+    e[6] = 0;
+    e[10] = 1;
+    e[14] = z;
+    e[3] = 0;
+    e[7] = 0;
+    e[11] = 0;
+    e[15] = 1;
     return this;
   }
 
@@ -462,7 +629,7 @@ export class Matrix4 {
    * @param z The Z value of a translation.
    * @return this
    */
-  public translate  (x: number, y: number, z: number) : Matrix4 {
+  public translate(x: number, y: number, z: number): Matrix4 {
     const e = this.elements;
     e[12] += e[0] * x + e[4] * y + e[8] * z;
     e[13] += e[1] * x + e[5] * y + e[9] * z;
@@ -480,10 +647,10 @@ export class Matrix4 {
    * @param z The Z coordinate of vector of rotation axis.
    * @return this
    */
-  public setRotate  (angle: number, x: number, y: number, z: number): Matrix4 {
+  public setRotate(angle: number, x: number, y: number, z: number): Matrix4 {
     let len, rlen, nc, xy, yz, zx, xs, ys, zs;
 
-    angle = Math.PI * angle / 180;
+    angle = (Math.PI * angle) / 180;
     const e = this.elements;
 
     let s = Math.sin(angle);
@@ -494,28 +661,64 @@ export class Matrix4 {
       if (x < 0) {
         s = -s;
       }
-      e[0] = 1; e[4] = 0; e[8] = 0; e[12] = 0;
-      e[1] = 0; e[5] = c; e[9] = -s; e[13] = 0;
-      e[2] = 0; e[6] = s; e[10] = c; e[14] = 0;
-      e[3] = 0; e[7] = 0; e[11] = 0; e[15] = 1;
+      e[0] = 1;
+      e[4] = 0;
+      e[8] = 0;
+      e[12] = 0;
+      e[1] = 0;
+      e[5] = c;
+      e[9] = -s;
+      e[13] = 0;
+      e[2] = 0;
+      e[6] = s;
+      e[10] = c;
+      e[14] = 0;
+      e[3] = 0;
+      e[7] = 0;
+      e[11] = 0;
+      e[15] = 1;
     } else if (0 === x && 0 !== y && 0 === z) {
       // Rotation around Y axis
       if (y < 0) {
         s = -s;
       }
-      e[0] = c; e[4] = 0; e[8] = s; e[12] = 0;
-      e[1] = 0; e[5] = 1; e[9] = 0; e[13] = 0;
-      e[2] = -s; e[6] = 0; e[10] = c; e[14] = 0;
-      e[3] = 0; e[7] = 0; e[11] = 0; e[15] = 1;
+      e[0] = c;
+      e[4] = 0;
+      e[8] = s;
+      e[12] = 0;
+      e[1] = 0;
+      e[5] = 1;
+      e[9] = 0;
+      e[13] = 0;
+      e[2] = -s;
+      e[6] = 0;
+      e[10] = c;
+      e[14] = 0;
+      e[3] = 0;
+      e[7] = 0;
+      e[11] = 0;
+      e[15] = 1;
     } else if (0 === x && 0 === y && 0 !== z) {
       // Rotation around Z axis
       if (z < 0) {
         s = -s;
       }
-      e[0] = c; e[4] = -s; e[8] = 0; e[12] = 0;
-      e[1] = s; e[5] = c; e[9] = 0; e[13] = 0;
-      e[2] = 0; e[6] = 0; e[10] = 1; e[14] = 0;
-      e[3] = 0; e[7] = 0; e[11] = 0; e[15] = 1;
+      e[0] = c;
+      e[4] = -s;
+      e[8] = 0;
+      e[12] = 0;
+      e[1] = s;
+      e[5] = c;
+      e[9] = 0;
+      e[13] = 0;
+      e[2] = 0;
+      e[6] = 0;
+      e[10] = 1;
+      e[14] = 0;
+      e[3] = 0;
+      e[7] = 0;
+      e[11] = 0;
+      e[15] = 1;
     } else {
       // Rotation around another axis
       len = Math.sqrt(x * x + y * y + z * z);
@@ -577,7 +780,17 @@ export class Matrix4 {
    * @param upX, upY, upZ The direction of the up vector.
    * @return this
    */
-  public setLookAt (eyeX: number, eyeY: number, eyeZ: number, centerX: number, centerY: number, centerZ: number, upX: number, upY: number, upZ: number): Matrix4 {
+  public setLookAt(
+    eyeX: number,
+    eyeY: number,
+    eyeZ: number,
+    centerX: number,
+    centerY: number,
+    centerZ: number,
+    upX: number,
+    upY: number,
+    upZ: number,
+  ): Matrix4 {
     let fx = centerX - eyeX;
     let fy = centerY - eyeY;
     let fz = centerZ - eyeZ;
@@ -637,8 +850,20 @@ export class Matrix4 {
    * @param upX, upY, upZ The direction of the up vector.
    * @return this
    */
-  public lookAt(eyeX: number, eyeY: number, eyeZ: number, centerX: number, centerY: number, centerZ: number, upX: number, upY: number, upZ: number): Matrix4 {
-    return this.concat(new Matrix4().setLookAt(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ));
+  public lookAt(
+    eyeX: number,
+    eyeY: number,
+    eyeZ: number,
+    centerX: number,
+    centerY: number,
+    centerZ: number,
+    upX: number,
+    upY: number,
+    upZ: number,
+  ): Matrix4 {
+    return this.concat(
+      new Matrix4().setLookAt(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ),
+    );
   }
 
   /**
@@ -647,30 +872,31 @@ export class Matrix4 {
    * @param light The array which stored coordinates of the light. if light[3]=0, treated as parallel light.
    * @return this
    */
-  public dropShadow  (plane: Array<number>, light: Array<number>): Matrix4 {
+  public dropShadow(plane: number[], light: number[]): Matrix4 {
     const mat = new Matrix4();
     const e = mat.elements;
 
-    const dot = plane[0] * light[0] + plane[1] * light[1] + plane[2] * light[2] + plane[3] * light[3];
+    const dot =
+      plane[0] * light[0] + plane[1] * light[1] + plane[2] * light[2] + plane[3] * light[3];
 
     e[0] = dot - light[0] * plane[0];
-    e[1] = - light[1] * plane[0];
-    e[2] = - light[2] * plane[0];
-    e[3] = - light[3] * plane[0];
+    e[1] = -light[1] * plane[0];
+    e[2] = -light[2] * plane[0];
+    e[3] = -light[3] * plane[0];
 
-    e[4] = - light[0] * plane[1];
+    e[4] = -light[0] * plane[1];
     e[5] = dot - light[1] * plane[1];
-    e[6] = - light[2] * plane[1];
-    e[7] = - light[3] * plane[1];
+    e[6] = -light[2] * plane[1];
+    e[7] = -light[3] * plane[1];
 
-    e[8] = - light[0] * plane[2];
-    e[9] = - light[1] * plane[2];
+    e[8] = -light[0] * plane[2];
+    e[9] = -light[1] * plane[2];
     e[10] = dot - light[2] * plane[2];
-    e[11] = - light[3] * plane[2];
+    e[11] = -light[3] * plane[2];
 
-    e[12] = - light[0] * plane[3];
-    e[13] = - light[1] * plane[3];
-    e[14] = - light[2] * plane[3];
+    e[12] = -light[0] * plane[3];
+    e[13] = -light[1] * plane[3];
+    e[14] = -light[2] * plane[3];
     e[15] = dot - light[3] * plane[3];
 
     return this.concat(mat);
@@ -683,9 +909,22 @@ export class Matrix4 {
    * @param directionalLightX, directionalLightY, directionalLightZ The vector of the direction of light.(Not necessary to be normalized.)
    * @return this
    */
-  public dropShadowDirectionally(normX: number, normY: number, normZ: number, planeX: number, planeY: number, planeZ: number, directionalLightX: number, directionalLightY: number, directionalLightZ: number): Matrix4 {
+  public dropShadowDirectionally(
+    normX: number,
+    normY: number,
+    normZ: number,
+    planeX: number,
+    planeY: number,
+    planeZ: number,
+    directionalLightX: number,
+    directionalLightY: number,
+    directionalLightZ: number,
+  ): Matrix4 {
     const a = planeX * normX + planeY * normY + planeZ * normZ;
-    return this.dropShadow([normX, normY, normZ, -a], [directionalLightX, directionalLightY, directionalLightZ, 0]);
+    return this.dropShadow(
+      [normX, normY, normZ, -a],
+      [directionalLightX, directionalLightY, directionalLightZ, 0],
+    );
   }
 }
 /**
@@ -694,31 +933,38 @@ export class Matrix4 {
  * @param opt_src source vector(option)
  */
 export class Vector3 {
-  constructor(opt_src?: Array<number>) {
+  constructor(opt_src?: number[]) {
     const v = new Float32Array(3);
     if (opt_src && typeof opt_src === 'object') {
-      v[0] = opt_src[0]; v[1] = opt_src[1]; v[2] = opt_src[2];
+      v[0] = opt_src[0];
+      v[1] = opt_src[1];
+      v[2] = opt_src[2];
     }
     this.elements = v;
   }
   public elements: Float32Array;
   /**
-    * Normalize.
-    * @return this
-    */
-  public normalize() : Vector3 {
+   * Normalize.
+   * @return this
+   */
+  public normalize(): Vector3 {
     const v = this.elements;
-    const c = v[0], d = v[1], e = v[2];
+    const c = v[0],
+      d = v[1],
+      e = v[2];
     let g = Math.sqrt(c * c + d * d + e * e);
     if (g) {
-      if (g == 1)
-        return this;
+      if (g == 1) return this;
     } else {
-      v[0] = 0; v[1] = 0; v[2] = 0;
+      v[0] = 0;
+      v[1] = 0;
+      v[2] = 0;
       return this;
     }
     g = 1 / g;
-    v[0] = c * g; v[1] = d * g; v[2] = e * g;
+    v[0] = c * g;
+    v[1] = d * g;
+    v[2] = e * g;
     return this;
   }
 }
@@ -732,7 +978,10 @@ export class Vector4 {
   constructor(opt_src?: any) {
     const v = new Float32Array(4);
     if (opt_src && typeof opt_src === 'object') {
-      v[0] = opt_src[0]; v[1] = opt_src[1]; v[2] = opt_src[2]; v[3] = opt_src[3];
+      v[0] = opt_src[0];
+      v[1] = opt_src[1];
+      v[2] = opt_src[2];
+      v[3] = opt_src[3];
     }
     this.elements = v;
   }

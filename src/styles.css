@@ -1,0 +1,89 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import 'tailwindcss';
+
+input,
+p,
+span,
+label {
+  font-size: smaller;
+}
+
+label {
+  font-weight: lighter;
+  font-size: x-small;
+}
+input {
+  font-weight: lighter;
+  border-width: 1px;
+  border-color: black;
+  border-style: solid;
+}
+input[type='number'] {
+  margin-left: 3px;
+  size: 5;
+  width: 60px;
+  margin-right: 7px;
+}
+
+input[type='radio'] {
+  margin-right: 0px;
+}
+
+.radio-label {
+  display: inline-block;
+  width: 70px;
+  margin-right: 4px;
+  padding-right: 0px;
+  text-align: right;
+}
+
+.text-label {
+  display: inline-block;
+  width: 80px;
+  margin-right: 0px;
+  padding-right: 0px;
+  text-align: right;
+}
+
+h1 {
+  font-weight: bold;
+  font-size: 1em;
+}
+
+details,
+summary {
+  font-weight: bold;
+  font-size: 0.8em;
+}
+h2 {
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+h3 {
+  font-weight: bold;
+  font-size: 0.8em;
+}
+
+summary {
+  font-weight: bold;
+  font-size: 1.2em;
+  margin-left: -20px;
+}
+
+input:disabled {
+  color: lightgray;
+  border-color: lightgrey;
+}
+
+input[type='file']::file-selector-button {
+  /* the button to select file */
+  background-color: lightgray;
+
+  border-style: solid;
+}
+
+details {
+  margin-left: 20px;
+}
