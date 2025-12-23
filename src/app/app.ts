@@ -11,12 +11,13 @@ import { DrawingInfo, OBJDoc } from './lib/objDoc';
 import { UiCallbacks } from './uiCallbacks';
 import { Model, Ortho, Perspective, Triple } from './util/containers';
 import { FormsModule } from '@angular/forms';
+import { Version } from './version';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
   styles: [],
-  imports: [FormsModule],
+  imports: [FormsModule, Version],
 })
 export class App {
   // startup, spin control

@@ -4,4 +4,6 @@ import { Component } from '@angular/core';
   templateUrl: './version.html',
   styles: [],
 })
-export class Version {}
+export class Version {
+  public versionCode = 10009;
+}
