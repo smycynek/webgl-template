@@ -9,10 +9,16 @@ label {
   font-size: smaller;
 }
 
+.link {
+  font-size: smaller;
+  text-decoration: underline;
+}
+
 label {
   font-weight: lighter;
   font-size: x-small;
 }
+
 input {
   font-weight: lighter;
   border-width: 1px;

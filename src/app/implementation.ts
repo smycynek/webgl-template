@@ -222,11 +222,13 @@ export class Implementation {
     if (this.app.gl) {
       const devicePixelRatio = window.devicePixelRatio || 1;
       console.log(`devicePixelRation: ${devicePixelRatio}`);
-      console.log(
-        `scaleCanvas: canvas.width ${this.app.gl.canvas.width}, canvas.height ${this.app.gl.canvas.width}, canvas.clientWidth ${this.app.gl.canvas.clientWidth}, canvas.clientHeight ${this.app.gl.canvas.clientWidth} `,
-      );
-      this.app.gl.canvas.width = this.app.gl.canvas.clientWidth * devicePixelRatio * 0.5;
-      this.app.gl.canvas.height = this.app.gl.canvas.clientWidth * devicePixelRatio * 0.5;
+
+      this.app.gl.canvas.style.width = '200px';
+      this.app.gl.canvas.style.height = '200px';
+
+      this.app.gl.clientHeight = this.app.gl.clientWidth;
+      this.app.gl.canvas.width = this.app.gl.canvas.clientWidth * devicePixelRatio;
+      this.app.gl.canvas.height = this.app.gl.canvas.clientWidth * devicePixelRatio;
     }
     this.app.gl.viewport(0, 0, this.app.gl.canvas.width, this.app.gl.canvas.width);
   }
