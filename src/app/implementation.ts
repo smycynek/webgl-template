@@ -34,19 +34,19 @@ export class Implementation {
     const projMatrix = new Matrix4();
     if (this.app.projectionType() == Constants.ORTHO) {
       projMatrix.setOrtho(
-        this.app.ortho.left,
-        this.app.ortho.right,
-        this.app.ortho.bottom,
-        this.app.ortho.top,
-        this.app.ortho.near,
-        this.app.ortho.far,
+        this.app.ortho().left,
+        this.app.ortho().right,
+        this.app.ortho().bottom,
+        this.app.ortho().top,
+        this.app.ortho().near,
+        this.app.ortho().far,
       );
     } else {
       projMatrix.setPerspective(
-        this.app.perspective.fieldOfView,
-        this.app.perspective.aspectRatio,
-        this.app.perspective.near,
-        this.app.perspective.far,
+        this.app.perspective().fieldOfView,
+        this.app.perspective().aspectRatio,
+        this.app.perspective().near,
+        this.app.perspective().far,
       );
     }
     return projMatrix;
@@ -58,37 +58,37 @@ export class Implementation {
       this.app.eye().x,
       this.app.eye().y,
       this.app.eye().z,
-      this.app.look.x,
-      this.app.look.y,
-      this.app.look.z,
-      this.app.up.x,
-      this.app.up.y,
-      this.app.up.z,
+      this.app.look().x,
+      this.app.look().y,
+      this.app.look().z,
+      this.app.up().x,
+      this.app.up().y,
+      this.app.up().z,
     );
     return viewMatrix;
   }
 
   private setupRotation(): Matrix4 {
     let rotationMatrix = new Matrix4();
-    rotationMatrix = rotationMatrix.rotate(this.app.rotation.x, 1, 0, 0);
-    rotationMatrix = rotationMatrix.rotate(this.app.rotation.y, 0, 1, 0);
-    rotationMatrix = rotationMatrix.rotate(this.app.rotation.z, 0, 0, 1);
+    rotationMatrix = rotationMatrix.rotate(this.app.rotation().x, 1, 0, 0);
+    rotationMatrix = rotationMatrix.rotate(this.app.rotation().y, 0, 1, 0);
+    rotationMatrix = rotationMatrix.rotate(this.app.rotation().z, 0, 0, 1);
     return rotationMatrix;
   }
 
   private setupTranslation(): Matrix4 {
     const translationMatrix = new Matrix4();
     translationMatrix.setTranslate(
-      this.app.translate.x,
-      this.app.translate.y,
-      this.app.translate.z,
+      this.app.translate().x,
+      this.app.translate().y,
+      this.app.translate().z,
     );
     return translationMatrix;
   }
 
   private setupScale(): Matrix4 {
     const scaleMatrix = new Matrix4();
-    scaleMatrix.setScale(this.app.scale.x, this.app.scale.y, this.app.scale.z);
+    scaleMatrix.setScale(this.app.scale().x, this.app.scale().y, this.app.scale().z);
     return scaleMatrix;
   }
 
@@ -174,15 +174,15 @@ export class Implementation {
     this.app.gl.uniform3fv(u_LightColor, Constants.lightColor.elements);
     this.app.gl.uniform3f(
       u_LightDirection,
-      this.app.directionalLight.x,
-      this.app.directionalLight.y,
-      this.app.directionalLight.z,
+      this.app.directionalLight().x,
+      this.app.directionalLight().y,
+      this.app.directionalLight().z,
     );
     this.app.gl.uniform3f(
       u_LightPosition,
-      this.app.pointLight.x,
-      this.app.pointLight.y,
-      this.app.pointLight.z,
+      this.app.pointLight().x,
+      this.app.pointLight().y,
+      this.app.pointLight().z,
     );
     this.app.gl.vertexAttrib4fv(a_TriangleColor, Constants.triangleColor.elements);
   }
@@ -197,7 +197,7 @@ export class Implementation {
     if (this.app.entityType() == Constants.VERTEX) {
       this.app.gl.uniform1i(u_UseStaticColor, true); // If rendering points, render single color
 
-      if (this.app.pointStyleChoice == PointStyle.Fancy) {
+      if (this.app.pointStyleChoice() == PointStyle.Fancy) {
         this.app.gl.uniform1i(u_FancyPoints, true);
       } else {
         this.app.gl.uniform1i(u_FancyPoints, false);
@@ -221,10 +221,10 @@ export class Implementation {
   public scaleCanvas(): void {
     if (this.app.gl) {
       const devicePixelRatio = window.devicePixelRatio || 1;
-      console.log(`devicePixelRation: ${devicePixelRatio}`);
+      console.log(`devicePixelRatio: ${devicePixelRatio}`);
 
-      this.app.gl.canvas.style.width = '200px';
-      this.app.gl.canvas.style.height = '200px';
+      this.app.gl.canvas.style.width = '300px';
+      this.app.gl.canvas.style.height = '300px';
 
       this.app.gl.clientHeight = this.app.gl.clientWidth;
       this.app.gl.canvas.width = this.app.gl.canvas.clientWidth * devicePixelRatio;
@@ -242,7 +242,7 @@ export class Implementation {
 
   // Main method:  Bind vertex and other buffers, set up transforms, lighting, shading, and point styles
   public loadGLData(): number {
-    const model = this.app.models.get(this.app.modelChoice);
+    const model = this.app.models.get(this.app.modelChoice());
     if (!model) {
       return 0; // model not loaded yet
     }

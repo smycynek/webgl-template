@@ -32,7 +32,7 @@
         <label class="radio-label">Box </label>
         <input checked type="radio" name="rModelChoice" (click)="handler.setCubeModel()" />
       </div>
-      <div [hidden]="modelChoice !== 4">
+      <div [hidden]="modelChoice() !== 4">
         <input
           style="width: 200px"
           (change)="handler.onFileSelected($event)"
@@ -89,18 +89,18 @@
 
     <div style="margin-left: 5px">
       <label class="text-label">Scale-X </label
-      ><input step="0.1" [(ngModel)]="scale.x" #ctrl="ngModel" (change)="start()" type="number" />
+      ><input step="0.1" [(ngModel)]="scale().x" #ctrl="ngModel" (change)="start()" type="number" />
       <label class="text-label">Scale-Y </label
-      ><input step="0.1" [(ngModel)]="scale.y" #ctrl="ngModel" (change)="start()" type="number" />
+      ><input step="0.1" [(ngModel)]="scale().y" #ctrl="ngModel" (change)="start()" type="number" />
       <label class="text-label">Scale-Z </label
-      ><input step="0.1" [(ngModel)]="scale.z" #ctrl="ngModel" (change)="start()" type="number" />
+      ><input step="0.1" [(ngModel)]="scale().z" #ctrl="ngModel" (change)="start()" type="number" />
     </div>
 
     <div style="margin-left: 5px">
       <label class="text-label">Trans-X </label
       ><input
         step="0.1"
-        [(ngModel)]="translate.x"
+        [(ngModel)]="translate().x"
         #ctrl="ngModel"
         (change)="start()"
         type="number"
@@ -108,7 +108,7 @@
       <label class="text-label">Trans-Y </label
       ><input
         step="0.1"
-        [(ngModel)]="translate.y"
+        [(ngModel)]="translate().y"
         #ctrl="ngModel"
         (change)="start()"
         type="number"
@@ -116,7 +116,7 @@
       <label class="text-label">Trans-Z </label
       ><input
         step="0.1"
-        [(ngModel)]="translate.z"
+        [(ngModel)]="translate().z"
         #ctrl="ngModel"
         (change)="start()"
         type="number"
@@ -127,7 +127,7 @@
       <label class="text-label">Rotate-X </label
       ><input
         step="0.1"
-        [(ngModel)]="rotation.x"
+        [(ngModel)]="rotation().x"
         #ctrl="ngModel"
         (change)="start()"
         type="number"
@@ -135,13 +135,19 @@
       <label class="text-label">Rotate-Y </label
       ><input
         step="0.1"
-        [(ngModel)]="rotation.y"
+        [(ngModel)]="rotation().y"
         #ctrl="ngModel"
         (change)="start()"
         type="number"
       />
       <label class="text-label">Rotate-Z</label>
-      <input step="0.1" [(ngModel)]="rotation.z" #ctrl="ngModel" (change)="start()" type="number" />
+      <input
+        step="0.1"
+        [(ngModel)]="rotation().z"
+        #ctrl="ngModel"
+        (change)="start()"
+        type="number"
+      />
     </div>
   </details>
 
@@ -155,7 +161,7 @@
           [disabled]="projectionType() === 'PERSPECTIVE'"
           width="2em"
           step="0.1"
-          [(ngModel)]="ortho.left"
+          [(ngModel)]="ortho().left"
           #ctrl="ngModel"
           (change)="start()"
           type="number"
@@ -165,7 +171,7 @@
         ><input
           [disabled]="projectionType() === 'PERSPECTIVE'"
           step="0.1"
-          [(ngModel)]="ortho.right"
+          [(ngModel)]="ortho().right"
           #ctrl="ngModel"
           (change)="start()"
           type="number"
@@ -176,7 +182,7 @@
         ><input
           [disabled]="projectionType() === 'PERSPECTIVE'"
           step="0.1"
-          [(ngModel)]="ortho.bottom"
+          [(ngModel)]="ortho().bottom"
           #ctrl="ngModel"
           (change)="start()"
           type="number"
@@ -186,7 +192,7 @@
         ><input
           [disabled]="projectionType() === 'PERSPECTIVE'"
           step="0.1"
-          [(ngModel)]="ortho.top"
+          [(ngModel)]="ortho().top"
           #ctrl="ngModel"
           (change)="start()"
           type="number"
@@ -198,7 +204,7 @@
         ><input
           [disabled]="projectionType() === 'PERSPECTIVE'"
           step="0.1"
-          [(ngModel)]="ortho.near"
+          [(ngModel)]="ortho().near"
           #ctrl="ngModel"
           (change)="start()"
           type="number"
@@ -208,7 +214,7 @@
         ><input
           [disabled]="projectionType() === 'PERSPECTIVE'"
           step="0.1"
-          [(ngModel)]="ortho.far"
+          [(ngModel)]="ortho().far"
           #ctrl="ngModel"
           (change)="start()"
           type="number"
@@ -220,7 +226,7 @@
         ><input
           [disabled]="projectionType() === 'ORTHO'"
           step="0.1"
-          [(ngModel)]="perspective.fieldOfView"
+          [(ngModel)]="perspective().fieldOfView"
           #ctrl="ngModel"
           (change)="start()"
           type="number"
@@ -230,7 +236,7 @@
         ><input
           [disabled]="projectionType() === 'ORTHO'"
           step="0.1"
-          [(ngModel)]="perspective.aspectRatio"
+          [(ngModel)]="perspective().aspectRatio"
           #ctrl="ngModel"
           (change)="start()"
           type="number"
@@ -241,7 +247,7 @@
         ><input
           [disabled]="projectionType() === 'ORTHO'"
           step="0.1"
-          [(ngModel)]="perspective.near"
+          [(ngModel)]="perspective().near"
           #ctrl="ngModel"
           (change)="start()"
           type="number"
@@ -251,7 +257,7 @@
         ><input
           [disabled]="projectionType() === 'ORTHO'"
           step="0.1"
-          [(ngModel)]="perspective.far"
+          [(ngModel)]="perspective().far"
           #ctrl="ngModel"
           (change)="start()"
           type="number"
@@ -261,13 +267,13 @@
 
       <div>
         <label class="text-label">Up-X</label
-        ><input step="0.1" [(ngModel)]="up.x" #ctrl="ngModel" (change)="start()" type="number" />
+        ><input step="0.1" [(ngModel)]="up().x" #ctrl="ngModel" (change)="start()" type="number" />
 
         <label class="text-label">Up-Y</label
-        ><input step="0.1" [(ngModel)]="up.y" #ctrl="ngModel" (change)="start()" type="number" />
+        ><input step="0.1" [(ngModel)]="up().y" #ctrl="ngModel" (change)="start()" type="number" />
 
         <label class="text-label">Up-Z</label
-        ><input step="0.1" [(ngModel)]="up.z" #ctrl="ngModel" (change)="start()" type="number" />
+        ><input step="0.1" [(ngModel)]="up().z" #ctrl="ngModel" (change)="start()" type="number" />
       </div>
       <div>
         <label class="text-label">Eye-X</label
@@ -281,13 +287,31 @@
       </div>
       <div>
         <label class="text-label">Look-X</label
-        ><input step="0.1" [(ngModel)]="look.x" #ctrl="ngModel" (change)="start()" type="number" />
+        ><input
+          step="0.1"
+          [(ngModel)]="look().x"
+          #ctrl="ngModel"
+          (change)="start()"
+          type="number"
+        />
 
         <label class="text-label">Look-Y</label
-        ><input step="0.1" [(ngModel)]="look.y" #ctrl="ngModel" (change)="start()" type="number" />
+        ><input
+          step="0.1"
+          [(ngModel)]="look().y"
+          #ctrl="ngModel"
+          (change)="start()"
+          type="number"
+        />
 
         <label class="text-label">Look-Z</label
-        ><input step="0.1" [(ngModel)]="look.z" #ctrl="ngModel" (change)="start()" type="number" />
+        ><input
+          step="0.1"
+          [(ngModel)]="look().z"
+          #ctrl="ngModel"
+          (change)="start()"
+          type="number"
+        />
       </div>
     </div>
   </details>
@@ -300,7 +324,7 @@
         ><input
           [disabled]="lightingType() === 'POINT_LIGHT'"
           step="0.1"
-          [(ngModel)]="directionalLight.x"
+          [(ngModel)]="directionalLight().x"
           #ctrl="ngModel"
           (change)="start()"
           type="number"
@@ -310,7 +334,7 @@
         ><input
           [disabled]="lightingType() === 'POINT_LIGHT'"
           step="0.1"
-          [(ngModel)]="directionalLight.z"
+          [(ngModel)]="directionalLight().z"
           #ctrl="ngModel"
           (change)="start()"
           type="number"
@@ -320,7 +344,7 @@
         ><input
           [disabled]="lightingType() === 'POINT_LIGHT'"
           step="0.1"
-          [(ngModel)]="directionalLight.z"
+          [(ngModel)]="directionalLight().z"
           #ctrl="ngModel"
           (change)="start()"
           type="number"
@@ -332,7 +356,7 @@
         ><input
           [disabled]="lightingType() === 'DIRECTIONAL_LIGHT'"
           step="0.1"
-          [(ngModel)]="pointLight.x"
+          [(ngModel)]="pointLight().x"
           #ctrl="ngModel"
           (change)="start()"
           type="number"
@@ -342,7 +366,7 @@
         ><input
           [disabled]="lightingType() === 'DIRECTIONAL_LIGHT'"
           step="0.1"
-          [(ngModel)]="pointLight.y"
+          [(ngModel)]="pointLight().y"
           #ctrl="ngModel"
           (change)="start()"
           type="number"
@@ -352,7 +376,7 @@
         ><input
           [disabled]="lightingType() === 'DIRECTIONAL_LIGHT'"
           step="0.1"
-          [(ngModel)]="pointLight.z"
+          [(ngModel)]="pointLight().z"
           #ctrl="ngModel"
           (change)="start()"
           type="number"

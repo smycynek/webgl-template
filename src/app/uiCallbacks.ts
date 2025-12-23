@@ -14,32 +14,32 @@ export class UiCallbacks {
 
   // Methods for setting the active model
   public setCubeModel() {
-    this.app.modelChoice = ModelChoice.Cube;
-    this.app.rotation.x = 0;
-    this.app.scale = tripleUniform(1.5);
+    this.app.modelChoice.set(ModelChoice.Cube);
+    this.app.rotation.set(new Triple(0, this.app.rotation().y, this.app.rotation().z));
+    this.app.scale.set(tripleUniform(1.5));
     this.app.start();
   }
 
   public setRookModel() {
-    this.app.modelChoice = ModelChoice.ChessRook;
-    this.app.rotation.x = 0;
-    this.app.scale = tripleUniform(2);
+    this.app.modelChoice.set(ModelChoice.ChessRook);
+    this.app.rotation.set(new Triple(0, this.app.rotation().y, this.app.rotation().z));
+    this.app.scale.set(tripleUniform(2));
     this.app.start();
   }
 
   public setNinModel() {
-    this.app.modelChoice = ModelChoice.NineInchNails;
-    this.app.rotation.x = 0;
-    this.app.scale = tripleUniform(10);
+    this.app.modelChoice.set(ModelChoice.NineInchNails);
+    this.app.rotation.set(new Triple(0, this.app.rotation().y, this.app.rotation().z));
+    this.app.scale.set(tripleUniform(10));
     this.app.start();
   }
 
   public setUploadedModel() {
-    this.app.modelChoice = ModelChoice.UploadedFile;
-    this.app.rotation.x = 0;
+    this.app.modelChoice.set(ModelChoice.UploadedFile);
+    this.app.rotation.set(new Triple(0, this.app.rotation().y, this.app.rotation().z));
     const model = this.app.models.get(ModelChoice.UploadedFile);
     if (model) {
-      this.app.scale = tripleUniform(model.scale);
+      this.app.scale.set(tripleUniform(model.scale));
     }
   }
 
@@ -65,12 +65,12 @@ export class UiCallbacks {
   }
 
   public setSimplePointsMode() {
-    this.app.pointStyleChoice = PointStyle.Simple;
+    this.app.pointStyleChoice.set(PointStyle.Simple);
     this.app.start();
   }
 
   public setFancyPointsMode() {
-    this.app.pointStyleChoice = PointStyle.Fancy;
+    this.app.pointStyleChoice.set(PointStyle.Fancy);
     this.app.start();
   }
 
@@ -107,8 +107,8 @@ export class UiCallbacks {
           getRecommendedScale(drawingInfo.vertices),
         );
         this.app.models.set(ModelChoice.UploadedFile, uploaded);
-        this.app.modelChoice = ModelChoice.UploadedFile;
-        this.app.scale = tripleUniform(uploaded.scale);
+        this.app.modelChoice.set(ModelChoice.UploadedFile);
+        this.app.scale.set(tripleUniform(uploaded.scale));
         this.app.start();
       });
     }
@@ -118,9 +118,11 @@ export class UiCallbacks {
   public spin() {
     if (this.app.spinning()) {
       requestAnimationFrame(function () {
-        globalApp.rotation.y += 1;
-        if (globalApp.rotation.y == 360) {
-          globalApp.rotation.y = 0;
+        globalApp.rotation.set(
+          new Triple(globalApp.rotation().x, globalApp.rotation().y + 1, globalApp.rotation().z),
+        );
+        if (globalApp.rotation().y == 360) {
+          globalApp.rotation.set(new Triple(globalApp.rotation().x, 0, globalApp.rotation().z));
         }
         globalApp.start(false);
         globalApp.handler.spin();

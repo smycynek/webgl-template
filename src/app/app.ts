@@ -3,13 +3,13 @@ import { Component, signal } from '@angular/core';
 
 import fragmentShaderSrc from '../assets/shaders/fragment-shader.glsl';
 import vertexShaderSrc from '../assets/shaders/vertex-shader.glsl';
-import { Constants, ModelChoice, PointStyle } from './constants';
+import { Constants, ModelChoice } from './constants';
 import { Defaults } from './defaults';
 import { Implementation } from './implementation';
 import { GlUtil } from './lib/glUtil';
 import { DrawingInfo, OBJDoc } from './lib/objDoc';
 import { UiCallbacks } from './uiCallbacks';
-import { Model, Ortho, Perspective, Triple } from './util/containers';
+import { Model } from './util/containers';
 import { FormsModule } from '@angular/forms';
 import { Version } from './version';
 
@@ -39,29 +39,29 @@ export class App {
   public models: Map<ModelChoice, Model> = new Map<ModelChoice, Model>();
 
   // Basic choices/toggles
-  public pointStyleChoice: PointStyle = Defaults.pointStyle;
-  public modelChoice: ModelChoice = Defaults.modelChoice;
+  public pointStyleChoice = signal(Defaults.pointStyle);
+  public modelChoice = signal(Defaults.modelChoice);
   public lightingType = signal(Defaults.lightingType);
   public entityType = signal(Defaults.entityType);
   public projectionType = signal(Defaults.projectionType);
 
   // Basic transforms
-  public translate: Triple = Defaults.translation;
-  public rotation: Triple = Defaults.rotation;
-  public scale: Triple = Defaults.scale;
+  public translate = signal(Defaults.translation);
+  public rotation = signal(Defaults.rotation);
+  public scale = signal(Defaults.scale);
 
   // View control
   public eye = signal(Defaults.eye);
-  public up: Triple = Defaults.up;
-  public look: Triple = Defaults.look;
+  public up = signal(Defaults.up);
+  public look = signal(Defaults.look);
 
   // Lighting positions
-  public directionalLight: Triple = Defaults.directionalLight;
-  public pointLight: Triple = Defaults.pointLight;
+  public directionalLight = signal(Defaults.directionalLight);
+  public pointLight = signal(Defaults.pointLight);
 
   // Projection parameters
-  public ortho: Ortho = Defaults.ortho;
-  public perspective: Perspective = Defaults.perspective;
+  public ortho = signal(Defaults.ortho);
+  public perspective = signal(Defaults.perspective);
 
   // GetWebGL context, load models, init shaders, and call start() to start rendering
   public initScreen() {
