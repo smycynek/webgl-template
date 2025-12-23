@@ -30,6 +30,12 @@ input[type='radio'] {
   margin-right: 0px;
 }
 
+.version {
+  margin-top: 10px;
+  font-size: xx-small;
+  font-weight: lighter;
+}
+
 .radio-label {
   display: inline-block;
   width: 70px;

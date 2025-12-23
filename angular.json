@@ -20,6 +20,7 @@
             "loader": {
               ".glsl": "text"
             },
+            "outputPath": "glta",
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [
