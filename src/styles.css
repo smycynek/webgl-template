@@ -25,6 +25,7 @@ input {
   border-color: black;
   border-style: solid;
 }
+
 input[type='number'] {
   margin-left: 3px;
   size: 5;
@@ -92,7 +93,6 @@ input:disabled {
 input[type='file']::file-selector-button {
   /* the button to select file */
   background-color: lightgray;
-
   border-style: solid;
 }
 
