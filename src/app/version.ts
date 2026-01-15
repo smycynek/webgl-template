@@ -5,5 +5,5 @@ import { Component } from '@angular/core';
   styles: [],
 })
 export class Version {
-  public versionCode = 10035;
+  public versionCode = 10036;
 }
