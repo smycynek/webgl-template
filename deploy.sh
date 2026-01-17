@@ -54,7 +54,7 @@ rm "$VERSION_PATH-e"
 rm "$README_PATH-e"
 # build
 
-npx ng build --base-href /"$APP"/
+bun ng build --base-href /"$APP"/
 
 cd "$APP"
 mv browser "$APP"
@@ -70,8 +70,6 @@ scp "$APP".zip "$SITE":public_html
 export SHELL_COMMAND="cd public_html; rm -rf $APP; unzip $APP.zip; rm $APP.zip; exit; bash"
 echo "$SHELL_COMMAND"
 ssh -t "$SITE" "$SHELL_COMMAND"
-scp ../src/favicon.ico "$SITE":public_html/"$APP"/favicon.ico
-scp ../src/preview.png "$SITE":public_html/"$APP"/preview.png
 
 cd ../
 echo $(pwd)
